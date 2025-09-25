@@ -1,0 +1,16 @@
+/* Adicione no final do seu src/App.css */
+.logout-button {
+  background-color: var(--acai-pink);
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 5px;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.logout-button:hover {
+  background-color: #d15694;
+}

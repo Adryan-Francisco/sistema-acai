@@ -1,0 +1,189 @@
+/* src/index.css */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+
+:root {
+  --bg-dark: #1a1a2e; /* Fundo escuro */
+  --bg-card: #282a36; /* Fundo dos cards/elementos */
+  --text-light: #f4f4f4; /* Texto claro */
+  --acai-purple: #8A2BE2; /* Roxo açaí vibrante */
+  --acai-pink: #FF69B4; /* Pink complementar */
+  --button-green: #4CAF50; /* Verde para o botão principal */
+  --button-green-hover: #45a049; /* Verde mais escuro no hover */
+  --border-light: #444; /* Borda clara */
+  --accent-gold: #FFD700; /* Ouro para o brinde */
+}
+
+body {
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: var(--bg-dark);
+  color: var(--text-light);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+#root {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: var(--acai-purple);
+  margin-bottom: 1rem;
+}
+
+a {
+  color: var(--acai-pink);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+fieldset {
+  border: 1px solid var(--border-light);
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 25px;
+  background-color: var(--bg-card);
+}
+
+legend {
+  color: var(--acai-pink);
+  font-weight: 600;
+  padding: 0 10px;
+}
+
+input[type="text"],
+input[type="number"],
+textarea {
+  width: calc(100% - 22px);
+  padding: 12px;
+  margin-top: 8px;
+  margin-bottom: 15px;
+  border: 1px solid var(--border-light);
+  border-radius: 5px;
+  background-color: #333;
+  color: var(--text-light);
+  font-size: 16px;
+  outline: none;
+}
+
+input[type="text"]::placeholder {
+  color: #aaa;
+}
+
+input[type="text"]:focus,
+input[type="number"]:focus,
+textarea:focus {
+  border-color: var(--acai-purple);
+  box-shadow: 0 0 0 2px rgba(138, 43, 226, 0.3);
+}
+
+input[type="radio"],
+input[type="checkbox"] {
+  margin-right: 10px;
+  appearance: none; /* Esconde o default */
+  width: 18px;
+  height: 18px;
+  border: 2px solid var(--acai-purple);
+  border-radius: 3px; /* Quadrado para checkbox */
+  position: relative;
+  top: 3px;
+  cursor: pointer;
+  background-color: var(--bg-dark);
+}
+
+input[type="radio"] {
+  border-radius: 50%; /* Redondo para radio */
+}
+
+input[type="radio"]:checked,
+input[type="checkbox"]:checked {
+  background-color: var(--acai-purple);
+  border-color: var(--acai-purple);
+}
+
+input[type="radio"]:checked::before {
+  content: '';
+  display: block;
+  width: 8px;
+  height: 8px;
+  background-color: var(--text-light);
+  border-radius: 50%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+input[type="checkbox"]:checked::before {
+  content: '✔'; /* Ícone de check */
+  display: block;
+  color: var(--text-light);
+  font-size: 12px;
+  text-align: center;
+  line-height: 14px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+label {
+  display: inline-block;
+  margin-bottom: 10px;
+  cursor: pointer;
+}
+
+button {
+  padding: 12px 25px;
+  font-size: 18px;
+  font-weight: 600;
+  background-color: var(--button-green);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  width: 100%;
+}
+
+button:hover:not(:disabled) {
+  background-color: var(--button-green-hover);
+  transform: translateY(-2px);
+}
+
+button:disabled {
+  background-color: #555;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+/* Navegação */
+nav {
+  background-color: var(--bg-card);
+  padding: 15px 20px;
+  border-bottom: 1px solid var(--border-light);
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+}
+
+nav a {
+  color: var(--acai-pink);
+  font-weight: 600;
+  padding: 8px 15px;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+}
+
+nav a:hover {
+  background-color: #3e3f4e;
+  text-decoration: none;
+}

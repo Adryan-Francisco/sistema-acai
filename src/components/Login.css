@@ -1,0 +1,76 @@
+/* src/components/Login.css */
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: calc(100vh - 150px); /* Ajusta a altura para centralizar melhor */
+  padding: 20px;
+  /* Fundo com gradiente sutil */
+  background: radial-gradient(circle, rgba(40,42,54,1) 0%, rgba(26,26,46,1) 100%);
+}
+
+.login-form {
+  width: 100%;
+  max-width: 400px;
+  padding: 40px;
+  background-color: var(--bg-card);
+  border-radius: 10px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  text-align: center;
+  border-top: 4px solid var(--acai-purple);
+}
+
+.login-logo {
+  margin-bottom: 20px;
+}
+
+.login-form h1 {
+  color: var(--acai-purple);
+  margin-top: 0;
+  margin-bottom: 10px;
+}
+
+.login-subtitle {
+  color: #ccc;
+  margin-top: 0;
+  margin-bottom: 30px;
+}
+
+.input-group {
+  text-align: left;
+  margin-bottom: 25px;
+}
+
+.input-group label {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--acai-pink);
+  font-weight: 600;
+}
+
+.login-form input {
+  width: 100%;
+  box-sizing: border-box; /* Garante que padding não afete a largura total */
+}
+
+.login-form button {
+  width: 100%;
+  margin-top: 10px;
+  background-color: var(--button-green);
+}
+
+.redirect-link {
+    margin-top: 25px;
+    color: #ccc;
+    font-size: 0.9em;
+}
+
+.redirect-link a {
+    color: var(--acai-pink);
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.redirect-link a:hover {
+    text-decoration: underline;
+}

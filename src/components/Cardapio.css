@@ -1,0 +1,53 @@
+/* src/components/Cardapio.css */
+.cardapio-container {
+  max-width: 600px;
+  margin: 0 auto; /* Remove a margem superior para alinhar com o conteúdo principal */
+  padding: 25px;
+  background-color: var(--bg-card);
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.cardapio-container h1 {
+  text-align: center;
+  color: var(--acai-purple);
+  margin-bottom: 30px;
+  font-size: 2.2em;
+}
+
+.acai-form fieldset {
+  margin-bottom: 25px;
+}
+
+.options-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 5px 0;
+}
+
+.option-item {
+  display: flex;
+  align-items: center;
+}
+
+.option-item label {
+  margin-bottom: 0;
+  margin-left: 5px;
+  font-size: 1.1em;
+  color: var(--text-light);
+}
+
+.total-display {
+  font-size: 24px;
+  font-weight: 700;
+  text-align: right;
+  margin: 30px 0;
+  color: var(--acai-pink);
+}
+
+button {
+  width: 100%;
+  padding: 15px;
+  font-size: 1.2em;
+}
