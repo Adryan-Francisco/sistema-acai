@@ -12,10 +12,13 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks: undefined,
+        entryFileNames: 'assets/[name]-[hash].js',
+        chunkFileNames: 'assets/[name]-[hash].js',
+        assetFileNames: 'assets/[name]-[hash].[ext]'
       }
     }
   },
-  // Configuração para desenvolvimento e produção
+  // Configuração para desenvolvimento
   server: {
     open: '/sistema-acai/',
   }
