@@ -14,5 +14,9 @@ export default defineConfig({
         manualChunks: undefined,
       }
     }
+  },
+  // Configuração para desenvolvimento e produção
+  server: {
+    open: '/sistema-acai/',
   }
 })
