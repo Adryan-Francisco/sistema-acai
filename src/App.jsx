@@ -231,7 +231,7 @@ function App() {
   const envMissing = !import.meta.env.VITE_SUPABASE_URL || !import.meta.env.VITE_SUPABASE_ANON_KEY;
 
   return (
-    <BrowserRouter>
+    <BrowserRouter basename="/sistema-acai">
       {envMissing && (
         <div className="env-warning">
           Supabase não configurado. Crie o arquivo .env com VITE_SUPABASE_URL e VITE_SUPABASE_ANON_KEY (veja .env.example) e reinicie o servidor.
