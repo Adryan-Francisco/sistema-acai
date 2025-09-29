@@ -34,22 +34,18 @@ function Cardapio() {
 
   // Verificação de sessão válida
   const isSessionValid = () => {
-    return session && session.user && session.user.id && typeof session.user.id === 'string' && session.user.id.length > 10;
+    return session && session.user && session.user.id && typeof session.user.id === 'string';
   };
 
   // Função para limpar tudo em caso de erro
   const limparTudo = async () => {
-    console.log('🧹 Iniciando limpeza completa...');
     try {
       await supabase.auth.signOut();
       localStorage.clear();
       sessionStorage.clear();
-      console.log('✅ Limpeza concluída, redirecionando...');
-      setTimeout(() => {
-        window.location.href = '/login';
-      }, 1000);
+      window.location.href = '/login';
     } catch (error) {
-      console.error('❌ Erro na limpeza:', error);
+      console.error('Erro ao limpar:', error);
       window.location.reload();
     }
   };
@@ -86,36 +82,21 @@ function Cardapio() {
   useEffect(() => {
     let novoTotal = 0;
     
-    if (tamanho && tamanho.preco) {
+    if (tamanho) {
       novoTotal += parseFloat(tamanho.preco);
     }
     
-    // Validar se complementosSelecionados é um array
-    if (Array.isArray(complementosSelecionados)) {
-      complementosSelecionados.forEach(complemento => {
-        if (complemento && complemento.preco) {
-          novoTotal += parseFloat(complemento.preco);
-        }
-      });
-    }
+    complementosSelecionados.forEach(complemento => {
+      novoTotal += parseFloat(complemento.preco);
+    });
     
     setTotal(novoTotal);
   }, [tamanho, complementosSelecionados]);
 
   // Função para criar pedido
   const criarPedido = async () => {
-    console.log('🛒 Iniciando criação do pedido...');
-    console.log('🔍 Session válida?', isSessionValid());
-    console.log('👤 Session details:', { 
-      exists: !!session, 
-      hasUser: !!session?.user, 
-      userId: session?.user?.id,
-      userIdType: typeof session?.user?.id
-    });
-
     // Validações básicas
     if (!isSessionValid()) {
-      console.warn('❌ Sessão inválida detectada');
       alert('Sua sessão expirou. Você será redirecionado para o login.');
       await limparTudo();
       return;
@@ -134,40 +115,33 @@ function Cardapio() {
     setLoading(true);
 
     try {
-      // Preparar dados do pedido (com validações)
-      const complementosArray = Array.isArray(complementosSelecionados) ? complementosSelecionados : [];
-      
+      // Preparar dados do pedido
       const detalhesPedido = {
-        tamanho: tamanho?.nome || 'Não especificado',
-        complementos: complementosArray.map(c => c?.nome || 'Complemento').filter(Boolean),
+        tamanho: tamanho.nome,
+        complementos: complementosSelecionados.map(c => c.nome),
         total: total.toFixed(2),
-        metodo_pagamento: metodoPagamento || 'Não especificado'
+        metodo_pagamento: metodoPagamento
       };
-
-      console.log('📦 Dados do pedido:', detalhesPedido);
 
       // Criar pedido usando RPC
       const { data, error } = await supabase.rpc('criar_novo_pedido', {
         p_detalhes: detalhesPedido
       });
 
-      console.log('📡 Resposta RPC:', { data, error });
-
       if (error) {
-        console.error('❌ Erro RPC:', error);
-        alert(`Erro ao criar pedido: ${error.message}`);
-        return;
-      }
-
-      // Verificar se retornou um ID válido
-      if (!data || data <= 0) {
-        console.error('❌ ID inválido retornado:', data);
-        alert('Erro: ID de pedido inválido');
-        return;
+        console.error('Erro RPC:', error);
+        
+        // Verificar se é erro de UUID/sessão
+        if (error.code === '22P02' || error.message?.includes('uuid') || error.message?.includes('Invalid input')) {
+          alert('Sua sessão está inválida. Você será redirecionado para o login.');
+          await limparTudo();
+          return;
+        }
+        
+        throw error;
       }
 
       // Sucesso!
-      console.log('🎉 Pedido criado com ID:', data);
       alert('Pedido criado com sucesso! Você pode acompanhar na área "Meus Pedidos".');
       
       // Limpar formulário
@@ -179,19 +153,16 @@ function Cardapio() {
       navigate('/meus-pedidos');
 
     } catch (error) {
-      console.error('❌ Erro geral ao criar pedido:', error);
+      console.error('Erro ao criar pedido:', error);
       
       // Tratar erros específicos
       if (error.code === '22P02' || error.message?.includes('uuid')) {
-        console.warn('🔄 Erro UUID - fazendo limpeza');
         alert('Sessão inválida. Redirecionando...');
         await limparTudo();
       } else if (error.message?.includes('RLS')) {
-        console.warn('🔐 Erro RLS - problema de permissões');
         alert('Erro de permissões. Faça login novamente.');
         await limparTudo();
       } else {
-        console.error('🤷‍♂️ Erro desconhecido:', error);
         alert('Erro ao criar pedido. Tente novamente.');
       }
       
@@ -202,13 +173,11 @@ function Cardapio() {
 
   // Renderização condicional para problemas de sessão
   if (!isSessionValid()) {
-    console.warn('⚠️ Renderizando tela de sessão inválida');
     return (
       <div className="cardapio-container" style={{textAlign: 'center', padding: '50px 20px'}}>
         <h2 style={{color: '#dc3545', marginBottom: '20px'}}>⚠️ Problema de Autenticação</h2>
         <p style={{marginBottom: '30px', fontSize: '1.1em'}}>
-          Sua sessão está inválida ou expirada.<br/>
-          <small>Detalhes: {session ? 'Session existe, mas userId inválido' : 'Nenhuma session encontrada'}</small>
+          Sua sessão está inválida ou expirada.
         </p>
         <button 
           onClick={limparTudo}
@@ -222,6 +191,8 @@ function Cardapio() {
             cursor: 'pointer',
             fontWeight: 'bold'
           }}
+          onMouseOver={(e) => e.target.style.backgroundColor = '#c82333'}
+          onMouseOut={(e) => e.target.style.backgroundColor = '#dc3545'}
         >
           🔄 Limpar e Ir para Login
         </button>

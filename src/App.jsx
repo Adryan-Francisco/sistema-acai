@@ -8,7 +8,9 @@ import HomePage from './components/HomePage';
 import Login from './components/Login';
 import SignUp from './components/SignUp'; // Página de Cadastro
 import PainelAdmin from './components/PainelAdmin';
+import CatalogoAdmin from './components/CatalogoAdmin';
 import MeusPedidos from './components/MeusPedidos';
+import DebugEnv from './components/DebugEnv';
 
 // Importação dos componentes de proteção de rota
 import ProtectedRoute from './components/ProtectedRoute'; // Para Admins
@@ -20,53 +22,221 @@ import './App.css';
 function Navigation() {
   const { session, signOut, userRole } = useAuth();
   const navigate = useNavigate();
+  const [isLoggingOut, setIsLoggingOut] = React.useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
 
   const handleLogout = async () => {
-    await signOut();
-    navigate('/'); // Redireciona para a página inicial após o logout
+    setIsLoggingOut(true);
+    try {
+      await signOut();
+      navigate('/'); // Redireciona para a página inicial após o logout
+    } catch (error) {
+      console.error('Erro ao fazer logout:', error);
+    } finally {
+      setIsLoggingOut(false);
+      setIsMobileMenuOpen(false);
+    }
+  };
+
+  const toggleMobileMenu = () => {
+    setIsMobileMenuOpen(!isMobileMenuOpen);
+  };
+
+  const closeMobileMenu = () => {
+    setIsMobileMenuOpen(false);
   };
 
   return (
-    <nav>
-      {/* Mostra o link do Cardápio se não for admin */}
-      {userRole !== 'admin' && (
-        <NavLink to="/" className={({ isActive }) => (isActive ? 'nav-active' : '')} end>
-          Cardápio (Cliente)
-        </NavLink>
-      )}
-      
-      {/* Mostra o link "Meus Pedidos" se for um cliente logado */}
-      {session && userRole === 'cliente' && (
-        <NavLink to="/meus-pedidos" className={({ isActive }) => (isActive ? 'nav-active' : '')}>
-          Meus Pedidos
-        </NavLink>
-      )}
+    <nav className="modern-nav">
+      <div className="nav-container">
+        {/* Logo/Brand */}
+        <div className="nav-brand">
+          <span className="brand-icon">🍇</span>
+          <span className="brand-text">AçaíSystem</span>
+        </div>
 
-      {/* Mostra o link do Painel se for um admin logado */}
-      {session && userRole === 'admin' && (
-        <NavLink to="/admin" className={({ isActive }) => (isActive ? 'nav-active' : '')}>
-          Painel (Açaiteria)
-        </NavLink>
-      )}
+        {/* Desktop Menu */}
+        <div className="nav-menu">
+          {/* Mostra o link do Cardápio se não for admin */}
+          {userRole !== 'admin' && (
+            <NavLink 
+              to="/" 
+              className={({ isActive }) => `nav-link ${isActive ? 'nav-active' : ''}`} 
+              end
+              onClick={closeMobileMenu}
+            >
+              <span className="nav-icon">🏠</span>
+              <span className="nav-text">Cardápio</span>
+            </NavLink>
+          )}
+          
+          {/* Mostra o link "Meus Pedidos" se for um cliente logado */}
+          {session && userRole === 'cliente' && (
+            <NavLink 
+              to="/meus-pedidos" 
+              className={({ isActive }) => `nav-link ${isActive ? 'nav-active' : ''}`}
+              onClick={closeMobileMenu}
+            >
+              <span className="nav-icon">📋</span>
+              <span className="nav-text">Meus Pedidos</span>
+            </NavLink>
+          )}
 
-      {/* Lógica para o botão de Login/Logout na direita */}
-      <div style={{ marginLeft: 'auto' }}>
-        {session ? (
-          <button onClick={handleLogout} className="logout-button">Sair</button>
-        ) : (
-          <NavLink to="/login" className={({ isActive }) => (isActive ? 'nav-active' : '')}>
-            Login
-          </NavLink>
-        )}
+          {/* Mostra o link do Painel se for um admin logado */}
+          {session && userRole === 'admin' && (
+            <>
+              <NavLink 
+                to="/admin" 
+                className={({ isActive }) => `nav-link ${isActive ? 'nav-active' : ''}`}
+                onClick={closeMobileMenu}
+              >
+                <span className="nav-icon">📊</span>
+                <span className="nav-text">Pedidos</span>
+              </NavLink>
+              <NavLink 
+                to="/admin/catalogo" 
+                className={({ isActive }) => `nav-link ${isActive ? 'nav-active' : ''}`}
+                onClick={closeMobileMenu}
+              >
+                <span className="nav-icon">�️</span>
+                <span className="nav-text">Catálogo</span>
+              </NavLink>
+            </>
+          )}
+        </div>
+
+        {/* User Actions */}
+        <div className="nav-actions">
+          {session ? (
+            <div className="user-menu">
+              <span className="user-info">
+                <span className="user-icon">👤</span>
+                <span className="user-name">{session.user?.email?.split('@')[0]}</span>
+              </span>
+              <button 
+                onClick={handleLogout} 
+                className={`logout-button ${isLoggingOut ? 'loading' : ''}`}
+                disabled={isLoggingOut}
+              >
+                {!isLoggingOut && <span className="nav-icon">🚪</span>}
+                <span className="nav-text">Sair</span>
+              </button>
+            </div>
+          ) : (
+            <NavLink 
+              to="/login" 
+              className={({ isActive }) => `nav-link login-link ${isActive ? 'nav-active' : ''}`}
+              onClick={closeMobileMenu}
+            >
+              <span className="nav-icon">🔐</span>
+              <span className="nav-text">Entrar</span>
+            </NavLink>
+          )}
+        </div>
+
+        {/* Mobile Menu Toggle */}
+        <button className="mobile-menu-toggle" onClick={toggleMobileMenu}>
+          <span className={`hamburger ${isMobileMenuOpen ? 'active' : ''}`}>
+            <span></span>
+            <span></span>
+            <span></span>
+          </span>
+        </button>
       </div>
+
+      {/* Mobile Menu Overlay */}
+      {isMobileMenuOpen && (
+        <div className="mobile-menu-overlay" onClick={closeMobileMenu}>
+          <div className="mobile-menu" onClick={(e) => e.stopPropagation()}>
+            {userRole !== 'admin' && (
+              <NavLink 
+                to="/" 
+                className={({ isActive }) => `mobile-nav-link ${isActive ? 'nav-active' : ''}`} 
+                end
+                onClick={closeMobileMenu}
+              >
+                <span className="nav-icon">🏠</span>
+                <span className="nav-text">Cardápio</span>
+              </NavLink>
+            )}
+            
+            {session && userRole === 'cliente' && (
+              <NavLink 
+                to="/meus-pedidos" 
+                className={({ isActive }) => `mobile-nav-link ${isActive ? 'nav-active' : ''}`}
+                onClick={closeMobileMenu}
+              >
+                <span className="nav-icon">📋</span>
+                <span className="nav-text">Meus Pedidos</span>
+              </NavLink>
+            )}
+
+            {session && userRole === 'admin' && (
+              <>
+                <NavLink 
+                  to="/admin" 
+                  className={({ isActive }) => `mobile-nav-link ${isActive ? 'nav-active' : ''}`}
+                  onClick={closeMobileMenu}
+                >
+                  <span className="nav-icon">📊</span>
+                  <span className="nav-text">Pedidos</span>
+                </NavLink>
+                <NavLink 
+                  to="/admin/catalogo" 
+                  className={({ isActive }) => `mobile-nav-link ${isActive ? 'nav-active' : ''}`}
+                  onClick={closeMobileMenu}
+                >
+                  <span className="nav-icon">🛠️</span>
+                  <span className="nav-text">Catálogo</span>
+                </NavLink>
+              </>
+            )}
+
+            <div className="mobile-user-section">
+              {session ? (
+                <>
+                  <div className="mobile-user-info">
+                    <span className="user-icon">👤</span>
+                    <span className="user-name">{session.user?.email?.split('@')[0]}</span>
+                  </div>
+                  <button 
+                    onClick={handleLogout} 
+                    className={`mobile-logout-button ${isLoggingOut ? 'loading' : ''}`}
+                    disabled={isLoggingOut}
+                  >
+                    {!isLoggingOut && <span className="nav-icon">🚪</span>}
+                    <span className="nav-text">Sair</span>
+                  </button>
+                </>
+              ) : (
+                <NavLink 
+                  to="/login" 
+                  className={({ isActive }) => `mobile-nav-link login-link ${isActive ? 'nav-active' : ''}`}
+                  onClick={closeMobileMenu}
+                >
+                  <span className="nav-icon">🔐</span>
+                  <span className="nav-text">Entrar</span>
+                </NavLink>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </nav>
   );
 }
 
 // Componente principal que define a estrutura de rotas
 function App() {
+  const envMissing = !import.meta.env.VITE_SUPABASE_URL || !import.meta.env.VITE_SUPABASE_ANON_KEY;
+
   return (
     <BrowserRouter>
+      {envMissing && (
+        <div className="env-warning">
+          Supabase não configurado. Crie o arquivo .env com VITE_SUPABASE_URL e VITE_SUPABASE_ANON_KEY (veja .env.example) e reinicie o servidor.
+        </div>
+      )}
       <Navigation />
       <div className="main-content">
         <Routes>
@@ -74,11 +244,16 @@ function App() {
           <Route path="/" element={<HomePage />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<SignUp />} />
+          <Route path="/_debug" element={<DebugEnv />} />
 
           {/* Rota Protegida para Administradores */}
           <Route
             path="/admin"
             element={ <ProtectedRoute> <PainelAdmin /> </ProtectedRoute> }
+          />
+          <Route
+            path="/admin/catalogo"
+            element={ <ProtectedRoute> <CatalogoAdmin /> </ProtectedRoute> }
           />
           
           {/* Rota Protegida para Clientes Logados */}

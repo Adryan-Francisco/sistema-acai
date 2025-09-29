@@ -1,18 +1,42 @@
 import React, { useState } from 'react';
 // Corrigindo o caminho para o cliente Supabase
-import { supabase } from '../supabaseClient.js';
+import { supabase, isSupabaseConfigured } from '../supabaseClient.js';
 import { useNavigate, Link } from 'react-router-dom';
-// Este caminho assume que Login.css está na mesma pasta (src/components)
-import './Login.css';
+import './SignUp.css';
 
+// Componente SVG para o ícone de açaí - versão melhorada
 const AcaiIcon = () => (
-    <svg className="login-logo" width="80" height="80" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M5 21C5 17.134 8.13401 14 12 14C15.866 14 19 17.134 19 21" stroke="#FF69B4" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-      <path d="M12 14C12 11.2386 14.2386 9 17 9C19.7614 9 22 11.2386 22 14" stroke="#8A2BE2" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-      <path d="M12 14C12 11.2386 9.76142 9 7 9C4.23858 9 2 11.2386 2 14" stroke="#8A2BE2" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-      <path d="M17 9C17 6.23858 14.7614 4 12 4C9.23858 4 7 6.23858 7 9" stroke="#8A2BE2" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-      <path d="M12 4C12 2.89543 11.1046 2 10 2" stroke="#4CAF50" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-    </svg>
+  <svg className="signup-logo" width="90" height="90" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <linearGradient id="acaiGradientSignup" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stopColor="#667eea" />
+        <stop offset="100%" stopColor="#764ba2" />
+      </linearGradient>
+      <linearGradient id="leafGradientSignup" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stopColor="#4CAF50" />
+        <stop offset="100%" stopColor="#45a049" />
+      </linearGradient>
+    </defs>
+    
+    {/* Açaí bowl */}
+    <circle cx="50" cy="60" r="28" fill="url(#acaiGradientSignup)" stroke="#5a67d8" strokeWidth="2"/>
+    <circle cx="50" cy="60" r="24" fill="url(#acaiGradientSignup)" opacity="0.8"/>
+    
+    {/* Complementos (granola, frutas) */}
+    <circle cx="42" cy="55" r="3" fill="#FFD700" opacity="0.9"/>
+    <circle cx="58" cy="52" r="2.5" fill="#FF6B6B" opacity="0.9"/>
+    <circle cx="46" cy="65" r="2" fill="#FF8C00" opacity="0.9"/>
+    <circle cx="54" cy="68" r="2.5" fill="#32CD32" opacity="0.9"/>
+    
+    {/* Folha do açaí */}
+    <path d="M50 25 Q45 15 35 20 Q40 30 50 25 Q55 15 65 20 Q60 30 50 25" fill="url(#leafGradientSignup)" stroke="#2E7D32" strokeWidth="1"/>
+    
+    {/* Haste */}
+    <line x1="50" y1="25" x2="50" y2="32" stroke="url(#leafGradientSignup)" strokeWidth="3" strokeLinecap="round"/>
+    
+    {/* Brilho no bowl */}
+    <ellipse cx="45" cy="52" rx="6" ry="4" fill="rgba(255,255,255,0.3)" transform="rotate(-20 45 52)"/>
+  </svg>
 );
 
 function SignUp() {
@@ -20,34 +44,45 @@ function SignUp() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
   const navigate = useNavigate();
 
   const handleSignUp = async (e) => {
     e.preventDefault();
-    setLoading(true);
-
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        data: {
-          full_name: nome,
-        }
-      }
-    });
-
-    setLoading(false);
-
-    if (error) {
-      if (error.message.includes('should be at least 6 characters')) {
-          alert('A sua senha é muito curta. Por favor, use pelo menos 6 caracteres.');
-      } else {
-          alert(error.error_description || error.message);
-      }
-    } else {
-      alert('Conta criada com sucesso! Enviámos um e-mail de confirmação. Por favor, verifique a sua caixa de entrada (e spam) para ativar a sua conta antes de fazer o login.');
-      navigate('/login');
+    if (!isSupabaseConfigured) {
+      setError('Supabase não configurado. Crie o arquivo .env (veja .env.example) e reinicie o servidor.');
+      return;
     }
+    
+    setLoading(true);
+    setError('');
+
+    try {
+      const { error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            full_name: nome,
+          }
+        }
+      });
+
+      if (error) {
+        if (error.message.includes('should be at least 6 characters')) {
+          setError('A sua senha é muito curta. Por favor, use pelo menos 6 caracteres.');
+        } else {
+          setError(error.error_description || error.message);
+        }
+      } else {
+        alert('Conta criada com sucesso! Enviámos um e-mail de confirmação. Por favor, verifique a sua caixa de entrada (e spam) para ativar a sua conta antes de fazer o login.');
+        navigate('/login');
+      }
+    } catch (err) {
+      setError('Erro de conexão. Tente novamente.');
+    }
+    
+    setLoading(false);
   };
 
   return (

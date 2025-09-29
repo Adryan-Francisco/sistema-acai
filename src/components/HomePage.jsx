@@ -1,18 +1,40 @@
 // src/components/HomePage.jsx
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '../AuthContext';
 import Cardapio from './Cardapio';
 
 function HomePage() {
-  const { userRole, loading, session } = useAuth();
+  const { userRole, loading, session, fetchUserRole } = useAuth();
+
+  // Se há sessão mas não há role, buscar a role
+  useEffect(() => {
+    if (session && userRole === null) {
+      fetchUserRole();
+    }
+  }, [session, userRole, fetchUserRole]);
 
   // Enquanto o AuthContext verifica a sessão, mostramos uma tela de carregamento
   // para evitar um "flash" da tela errada.
   if (loading) {
     return (
-      <div style={{ height: '80vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <h2>Verificando sessão...</h2>
+      <div className="page-loading">
+        <div className="loading-spinner"></div>
+        <h2 className="loading-text animate-pulse">Verificando sessão...</h2>
+      </div>
+    );
+  }
+
+  // Se há sessão mas ainda não temos a role, aguardamos
+  if (session && userRole === null) {
+    return (
+      <div className="page-loading">
+        <div className="loading-dots">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+        <h2 className="loading-text animate-fadeInUp">Carregando dados do usuário...</h2>
       </div>
     );
   }

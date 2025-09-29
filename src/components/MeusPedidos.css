@@ -1,0 +1,365 @@
+/* src/components/MeusPedidos.css - Tema Claro e Legível */
+
+/* ========== CONTAINER PRINCIPAL ========== */
+.meus-pedidos-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: var(--space-lg);
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--border-solid);
+  font-family: Arial, sans-serif;
+  animation: fadeInUp 0.6s ease-out;
+}
+
+.meus-pedidos-container h1 {
+  text-align: center;
+  font-size: 2.5rem;
+  margin-bottom: var(--space-xl);
+  background: var(--primary-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  position: relative;
+  animation: fadeInUp 0.8s ease-out 0.2s both;
+}
+
+/* ========== FILTROS ========== */
+.filtros-container {
+  display: flex;
+  gap: var(--space-lg);
+  margin-bottom: var(--space-xl);
+  padding: var(--space-lg);
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
+  border-radius: var(--radius-lg);
+  border: 2px solid rgba(209, 213, 219, 0.5);
+  flex-wrap: wrap;
+  align-items: end;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.filtro-status, .filtro-busca {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  min-width: 200px;
+}
+
+.filtro-status label, .filtro-busca label {
+  color: var(--text-dark);
+  font-weight: 700;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.filtro-select, .filtro-input {
+  padding: var(--space-sm) var(--space-md);
+  border: 2px solid rgba(139, 92, 246, 0.3);
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.95);
+  color: var(--text-dark);
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  font-weight: 500;
+}
+
+.filtro-select:focus, .filtro-input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  background: rgba(255, 255, 255, 1);
+  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+}
+
+.filtro-input::placeholder {
+  color: var(--text-muted);
+  opacity: 0.8;
+}
+
+/* ========== LISTA DE PEDIDOS ========== */
+.pedidos-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: var(--space-lg);
+  margin-top: var(--space-xl);
+}
+
+.pedido-card {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  border: 2px solid rgba(209, 213, 219, 0.5);
+  border-radius: var(--radius-lg);
+  padding: var(--space-lg);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  position: relative;
+  overflow: hidden;
+  animation: slideInUp 0.4s ease-out;
+  font-family: Arial, sans-serif;
+}
+
+.pedido-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: var(--primary-gradient);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.pedido-card:hover {
+  transform: translateY(-6px) scale(1.02);
+  box-shadow: 0 15px 35px rgba(139, 92, 246, 0.15);
+  border-color: rgba(139, 92, 246, 0.4);
+}
+
+.pedido-card:hover::before {
+  opacity: 1;
+}
+
+/* ========== INFORMAÇÕES DO PEDIDO ========== */
+.pedido-info {
+  margin: var(--space-sm) 0;
+  color: var(--text-dark);
+  font-size: 1rem;
+  line-height: 1.6;
+  font-weight: 600;
+}
+
+.pedido-info strong {
+  color: var(--primary-color);
+  font-weight: 700;
+  display: inline-block;
+  min-width: 90px;
+  font-size: 1rem;
+}
+
+.total-pedido {
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: #047857;
+  background: rgba(16, 185, 129, 0.15);
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-md);
+  border: 2px solid rgba(16, 185, 129, 0.4);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  display: inline-block;
+  margin: var(--space-sm) 0;
+  text-align: center;
+  min-width: 100px;
+}
+
+/* ========== DETALHES DO PEDIDO ========== */
+.detalhes-pedido {
+  background: rgba(248, 250, 252, 0.8);
+  padding: var(--space-md);
+  border-radius: var(--radius-md);
+  border-left: 4px solid var(--primary-color);
+  margin: var(--space-md) 0;
+  box-shadow: 0 2px 8px rgba(139, 92, 246, 0.1);
+}
+
+.detalhes-pedido h4 {
+  margin: 0 0 var(--space-sm) 0;
+  color: var(--primary-color);
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+.detalhes-pedido p {
+  margin: var(--space-xs) 0;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.complementos-section {
+  margin-top: var(--space-md);
+}
+
+.complementos-section strong {
+  color: var(--text-dark);
+  font-weight: 700;
+  display: block;
+  margin-bottom: var(--space-xs);
+}
+
+.complementos-list {
+  padding-left: var(--space-md);
+}
+
+.complementos-list li {
+  color: var(--text-secondary);
+  margin-bottom: var(--space-xs);
+  font-weight: 500;
+}
+
+/* ========== STATUS DO PEDIDO ========== */
+.status-text {
+  display: inline-block;
+  padding: var(--space-xs) var(--space-md);
+  border-radius: var(--radius-lg);
+  font-weight: 700;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border: 2px solid currentColor;
+  background: rgba(255, 255, 255, 0.95);
+  text-shadow: none;
+  margin: var(--space-xs) 0;
+}
+
+/* ========== MÉTODO DE PAGAMENTO ========== */
+.metodo-pagamento {
+  background: rgba(139, 92, 246, 0.05);
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: var(--radius-sm);
+  border-left: 3px solid var(--primary-color);
+  margin: var(--space-sm) 0;
+}
+
+.pagamento-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  background: rgba(139, 92, 246, 0.1);
+  color: var(--primary-color);
+  padding: 2px 8px;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  font-size: 0.9rem;
+  margin-left: var(--space-xs);
+}
+
+/* Cores dos status */
+.status-pendente .status-text {
+  color: #b45309;
+  border-color: #d97706;
+  background: rgba(251, 191, 36, 0.15);
+}
+
+.status-confirmado .status-text {
+  color: #047857;
+  border-color: #059669;
+  background: rgba(16, 185, 129, 0.15);
+}
+
+.status-em-preparo .status-text,
+.status-em-preparacao .status-text {
+  color: #0369a1;
+  border-color: #0284c7;
+  background: rgba(14, 165, 233, 0.15);
+}
+
+.status-pronto .status-text {
+  color: #6b21a8;
+  border-color: #7c3aed;
+  background: rgba(139, 92, 246, 0.15);
+}
+
+.status-entregue .status-text {
+  color: #15803d;
+  border-color: #16a34a;
+  background: rgba(34, 197, 94, 0.15);
+}
+
+.status-cancelado .status-text {
+  color: #dc2626;
+  border-color: #ef4444;
+  background: rgba(239, 68, 68, 0.15);
+}
+
+/* ========== ESTADOS VAZIOS ========== */
+.no-results-message {
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 1.1rem;
+  margin-top: var(--space-xl);
+  padding: var(--space-xl);
+  background: rgba(245, 158, 11, 0.1);
+  border: 2px dashed rgba(245, 158, 11, 0.3);
+  border-radius: var(--radius-lg);
+  font-weight: 600;
+}
+
+.no-results-message button {
+  margin-left: var(--space-sm);
+  padding: var(--space-xs) var(--space-sm);
+  background: var(--primary-gradient);
+  color: white;
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.no-results-message button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+}
+
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 300px;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.loading-text {
+  color: var(--text-secondary);
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+
+/* ========== RESPONSIVIDADE ========== */
+@media (max-width: 768px) {
+  .filtros-container {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .filtro-status, .filtro-busca {
+    min-width: auto;
+    width: 100%;
+  }
+  
+  .pedidos-list {
+    grid-template-columns: 1fr;
+    gap: var(--space-md);
+  }
+  
+  .pedido-info {
+    font-size: 0.95rem;
+  }
+  
+  .total-pedido {
+    font-size: 1.2rem;
+    min-width: 80px;
+  }
+}
+
+@media (max-width: 480px) {
+  .meus-pedidos-container {
+    padding: var(--space-md);
+  }
+  
+  .meus-pedidos-container h1 {
+    font-size: 2rem;
+  }
+  
+  .pedido-card {
+    padding: var(--space-md);
+  }
+  
+  .detalhes-pedido {
+    padding: var(--space-sm);
+  }
+}

@@ -1,6 +1,6 @@
 // src/components/TestSupabase.jsx
 import { useState, useEffect } from 'react';
-import { supabase } from '../supabaseClient';
+import { supabase, isSupabaseConfigured } from '../supabaseClient';
 
 function TestSupabase() {
   const [status, setStatus] = useState('Iniciando teste de conexão...');
@@ -14,6 +14,12 @@ function TestSupabase() {
     }, 10000); // 10 segundos
 
     const testConnection = async () => {
+      if (!isSupabaseConfigured) {
+        setStatus('Supabase não configurado (.env ausente).');
+        setError('Crie o arquivo .env a partir de .env.example e reinicie o servidor.');
+        clearTimeout(timeoutId);
+        return;
+      }
       // O teste mais simples: contar as linhas da tabela 'pedidos'.
       const { error: countError } = await supabase
         .from('pedidos')
