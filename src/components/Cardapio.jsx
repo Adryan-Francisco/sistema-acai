@@ -29,6 +29,7 @@ function Cardapio() {
   // Estados dos dados do cardápio
   const [listaTamanhos, setListaTamanhos] = useState([]);
   const [listaComplementos, setListaComplementos] = useState([]);
+  const [complementosPadrao, setComplementosPadrao] = useState([]);
   const [loadingCardapio, setLoadingCardapio] = useState(true);
   const [erro, setErro] = useState('');
 
@@ -70,6 +71,19 @@ function Cardapio() {
 
         setListaTamanhos(tamanhosResponse.data || []);
         setListaComplementos(complementosResponse.data || []);
+        
+        // Definir complementos que vêm por padrão (incluídos automaticamente)
+        const complementosPadraoLista = (complementosResponse.data || []).filter(comp => {
+          // Complementos que vêm incluídos por padrão (baseado nos dados reais do cardápio)
+          const nomesPadrao = [
+            'Leite Condensado', 'Granola', 'Banana', 'Mel', 'Aveia',
+            'Granulado', 'Açúcar Cristal', 'Flocos', 'Amendoim'
+          ];
+          return nomesPadrao.some(nome => comp.nome.toLowerCase().includes(nome.toLowerCase()));
+        });
+        
+        setComplementosPadrao(complementosPadraoLista);
+        setComplementosSelecionados(complementosPadraoLista); // Já vêm selecionados
         
       } catch (error) {
         console.error('Erro ao carregar cardápio:', error);
@@ -278,15 +292,57 @@ function Cardapio() {
         </div>
       </div>
 
-      {/* Seção de Complementos */}
+      {/* Seção de Complementos Incluídos */}
       <div className="cardapio-section">
-        <h2>2. Adicionais (Opcionais)</h2>
+        <h2>2. Acompanhamentos Incluídos</h2>
+        <p className="secao-subtitulo">✅ Estes itens já estão incluídos no seu açaí. Desmarque os que você NÃO quer:</p>
         
-        {/* Agrupar complementos por categoria */}
+        <div className="complementos-incluidos">
+          {complementosPadrao.map((comp) => {
+            const estaSelecionado = complementosSelecionados.find(c => c.id === comp.id);
+            return (
+              <div
+                key={comp.id}
+                className={`complemento-incluido ${estaSelecionado ? 'incluido' : 'removido'}`}
+                onClick={() => {
+                  if (estaSelecionado) {
+                    // Remover do pedido
+                    setComplementosSelecionados(complementosSelecionados.filter(c => c.id !== comp.id));
+                  } else {
+                    // Adicionar de volta ao pedido
+                    setComplementosSelecionados([...complementosSelecionados, comp]);
+                  }
+                }}
+              >
+                <div className="complemento-info">
+                  <span className="complemento-status">
+                    {estaSelecionado ? '✅' : '❌'}
+                  </span>
+                  <span className="complemento-nome">{comp.nome}</span>
+                  <span className="complemento-status-texto">
+                    {estaSelecionado ? 'INCLUÍDO' : 'REMOVIDO'}
+                  </span>
+                </div>
+                <span className="complemento-preco">
+                  {estaSelecionado ? 'GRÁTIS' : 'Removido'}
+                </span>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Seção de Complementos Extras */}
+      <div className="cardapio-section">
+        <h2>3. Adicionais Extras (Opcionais)</h2>
+        <p className="secao-subtitulo">💰 Complementos adicionais com custo extra:</p>
+        
+        {/* Agrupar complementos por categoria (excluindo os padrão) */}
         {['Cremes', 'Diversos', 'Frutas'].map(categoria => {
-          const complementosCategoria = listaComplementos.filter(comp => 
-            comp.categoria === categoria || (!comp.categoria && categoria === 'Diversos')
-          );
+          const complementosCategoria = listaComplementos.filter(comp => {
+            const ehPadrao = complementosPadrao.find(p => p.id === comp.id);
+            return !ehPadrao && (comp.categoria === categoria || (!comp.categoria && categoria === 'Diversos'));
+          });
           
           if (complementosCategoria.length === 0) return null;
           
@@ -350,7 +406,7 @@ function Cardapio() {
 
       {/* Seção de Método de Pagamento */}
       <div className="cardapio-section">
-        <h2>3. Método de Pagamento</h2>
+        <h2>4. Método de Pagamento</h2>
         <div className="metodos-pagamento">
           <label className={`metodo-opcao ${metodoPagamento === 'Dinheiro' ? 'selecionado' : ''}`}>
             <input
