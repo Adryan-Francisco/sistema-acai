@@ -316,6 +316,38 @@ function Cardapio() {
         })}
       </div>
 
+      {/* Seção de Complementos Selecionados */}
+      {complementosSelecionados.length > 0 && (
+        <div className="cardapio-section">
+          <h2>🛒 Complementos Selecionados</h2>
+          <div className="complementos-selecionados">
+            {complementosSelecionados.map((comp) => (
+              <div key={comp.id} className="complemento-selecionado">
+                <span className="complemento-nome">{comp.nome}</span>
+                <span className="complemento-preco">R$ {parseFloat(comp.preco).toFixed(2)}</span>
+                <button
+                  className="remover-btn"
+                  onClick={() => {
+                    setComplementosSelecionados(complementosSelecionados.filter(c => c.id !== comp.id));
+                  }}
+                  title="Remover complemento"
+                >
+                  ❌
+                </button>
+              </div>
+            ))}
+            <button
+              className="limpar-todos-btn"
+              onClick={() => {
+                setComplementosSelecionados([]);
+              }}
+            >
+              🗑️ Limpar Todos
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Seção de Método de Pagamento */}
       <div className="cardapio-section">
         <h2>3. Método de Pagamento</h2>

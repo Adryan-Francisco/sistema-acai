@@ -95,10 +95,9 @@ ON CONFLICT (nome) DO UPDATE SET
 ALTER TABLE public.complementos ADD COLUMN IF NOT EXISTS categoria text DEFAULT 'Diversos';
 ALTER TABLE public.tamanhos ADD COLUMN IF NOT EXISTS descricao text;
 
--- PASSO 5: Verificar dados inseridos
-SELECT 'TAMANHOS' as tipo, nome, preco FROM public.tamanhos ORDER BY ordem
-UNION ALL
-SELECT 'COMPLEMENTOS' as tipo, nome, preco FROM public.complementos ORDER BY categoria, ordem;
+-- PASSO 5: Verificar dados inseridos (execute separadamente se necessário)
+-- SELECT nome, preco FROM public.tamanhos ORDER BY ordem;
+-- SELECT nome, preco, categoria FROM public.complementos ORDER BY categoria, ordem;
 
 -- =====================================================
 -- CARDÁPIO COMPLETO ATUALIZADO COM DADOS REAIS!
