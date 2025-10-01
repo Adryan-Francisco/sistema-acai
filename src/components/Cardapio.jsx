@@ -260,7 +260,7 @@ function Cardapio() {
 
       {/* Seção de Tamanhos */}
       <div className="cardapio-section">
-        <h2>1. Escolha o Tamanho</h2>
+        <h2>1. Escolha o Tamanho e Tipo</h2>
         <div className="opcoes-grid">
           {listaTamanhos.map((tam) => (
             <div
@@ -270,6 +270,9 @@ function Cardapio() {
             >
               <h3>{tam.nome}</h3>
               <p className="preco">R$ {parseFloat(tam.preco).toFixed(2)}</p>
+              {tam.descricao && (
+                <p className="descricao">{tam.descricao}</p>
+              )}
             </div>
           ))}
         </div>
@@ -277,25 +280,40 @@ function Cardapio() {
 
       {/* Seção de Complementos */}
       <div className="cardapio-section">
-        <h2>2. Escolha os Complementos (Opcionais)</h2>
-        <div className="opcoes-grid">
-          {listaComplementos.map((comp) => (
-            <div
-              key={comp.id}
-              className={`opcao-card ${complementosSelecionados.find(c => c.id === comp.id) ? 'selecionada' : ''}`}
-              onClick={() => {
-                if (complementosSelecionados.find(c => c.id === comp.id)) {
-                  setComplementosSelecionados(complementosSelecionados.filter(c => c.id !== comp.id));
-                } else {
-                  setComplementosSelecionados([...complementosSelecionados, comp]);
-                }
-              }}
-            >
-              <h3>{comp.nome}</h3>
-              <p className="preco">+ R$ {parseFloat(comp.preco).toFixed(2)}</p>
+        <h2>2. Adicionais (Opcionais)</h2>
+        
+        {/* Agrupar complementos por categoria */}
+        {['Cremes', 'Diversos', 'Frutas'].map(categoria => {
+          const complementosCategoria = listaComplementos.filter(comp => 
+            comp.categoria === categoria || (!comp.categoria && categoria === 'Diversos')
+          );
+          
+          if (complementosCategoria.length === 0) return null;
+          
+          return (
+            <div key={categoria} className="categoria-section">
+              <h3 className="categoria-titulo">{categoria}</h3>
+              <div className="opcoes-grid-pequeno">
+                {complementosCategoria.map((comp) => (
+                  <div
+                    key={comp.id}
+                    className={`opcao-card-pequeno ${complementosSelecionados.find(c => c.id === comp.id) ? 'selecionada' : ''}`}
+                    onClick={() => {
+                      if (complementosSelecionados.find(c => c.id === comp.id)) {
+                        setComplementosSelecionados(complementosSelecionados.filter(c => c.id !== comp.id));
+                      } else {
+                        setComplementosSelecionados([...complementosSelecionados, comp]);
+                      }
+                    }}
+                  >
+                    <h4>{comp.nome}</h4>
+                    <p className="preco">+ R$ {parseFloat(comp.preco).toFixed(2)}</p>
+                  </div>
+                ))}
+              </div>
             </div>
-          ))}
-        </div>
+          );
+        })}
       </div>
 
       {/* Seção de Método de Pagamento */}

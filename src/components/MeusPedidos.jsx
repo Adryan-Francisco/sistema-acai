@@ -10,45 +10,58 @@ function MeusPedidos() {
   const [loading, setLoading] = useState(true);
   const [filtroStatus, setFiltroStatus] = useState('todos');
   const [buscaTexto, setBuscaTexto] = useState('');
-  const { user } = useAuth();
+  const { user, session } = useAuth();
 
   useEffect(() => {
+    console.log('👤 Dados do usuário:', { 
+      user: user, 
+      userId: user?.id,
+      sessionUserId: session?.user?.id 
+    });
     const fetchPedidos = async () => {
-      if (!isSupabaseConfigured) {
+      if (!isSupabaseConfigured || !user?.id) {
         setLoading(false);
         return;
       }
+      
+      console.log('🔍 Buscando pedidos para usuário:', user.id);
+      
+      // Filtrar pedidos apenas do usuário logado
       const { data, error } = await supabase
         .from('pedidos')
         .select('*')
+        .eq('user_id', user.id)
         .order('created_at', { ascending: false });
 
       if (error) {
         console.error("Erro ao buscar meus pedidos:", error);
       } else {
-        setPedidos(data);
-        setPedidosFiltrados(data);
+        console.log('✅ Pedidos encontrados:', data?.length || 0);
+        setPedidos(data || []);
+        setPedidosFiltrados(data || []);
       }
       setLoading(false);
     };
 
-    if (user) {
+    if (user?.id) {
       fetchPedidos();
     }
 
-    if (!isSupabaseConfigured || !user) return;
+    if (!isSupabaseConfigured || !user?.id) return;
 
+    // Subscription para atualizações em tempo real (apenas pedidos do usuário)
     const channel = supabase
-      .channel(`meus_pedidos_${user?.id}`)
+      .channel(`meus_pedidos_${user.id}`)
       .on(
         'postgres_changes',
         { 
           event: 'UPDATE', 
           schema: 'public', 
           table: 'pedidos', 
-          filter: `user_id=eq.${user?.id}`
+          filter: `user_id=eq.${user.id}`
         },
         (payload) => {
+          console.log('🔔 Atualização de pedido recebida:', payload.new);
           setPedidos((prevPedidos) => {
             const updated = prevPedidos.map(p => 
               p.id === payload.new.id ? payload.new : p
