@@ -45,6 +45,7 @@ function SignUp() {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
   const navigate = useNavigate();
 
   const handleSignUp = async (e) => {
@@ -56,15 +57,17 @@ function SignUp() {
     
     setLoading(true);
     setError('');
+    setSuccessMessage('');
 
     try {
-      const { error } = await supabase.auth.signUp({
+      const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
           data: {
             full_name: nome,
-          }
+          },
+          emailRedirectTo: `${window.location.origin}/sistema-acai/email-confirmado`
         }
       });
 
@@ -75,8 +78,17 @@ function SignUp() {
           setError(error.error_description || error.message);
         }
       } else {
-        alert('Conta criada com sucesso! Enviámos um e-mail de confirmação. Por favor, verifique a sua caixa de entrada (e spam) para ativar a sua conta antes de fazer o login.');
-        navigate('/login');
+        // Verifica se o email já foi confirmado automaticamente (em alguns casos do Supabase)
+        if (data?.user?.confirmed_at) {
+          setSuccessMessage('Conta criada com sucesso! Redirecionando...');
+          setTimeout(() => navigate('/email-confirmado'), 2000);
+        } else {
+          setSuccessMessage('Conta criada! Por favor, verifique seu email para confirmar o cadastro.');
+          // Limpa os campos
+          setNome('');
+          setEmail('');
+          setPassword('');
+        }
       }
     } catch (err) {
       setError('Erro de conexão. Tente novamente.');
@@ -103,6 +115,10 @@ function SignUp() {
           <label htmlFor="password">Senha</label>
           <input id="password" type="password" placeholder="Crie uma senha forte (mín. 6 caracteres)" value={password} onChange={(e) => setPassword(e.target.value)} required />
         </div>
+        
+        {error && <div className="error-message">{error}</div>}
+        {successMessage && <div className="success-message">{successMessage}</div>}
+        
         <button type="submit" disabled={loading}>
           {loading ? 'A criar...' : 'Registar'}
         </button>

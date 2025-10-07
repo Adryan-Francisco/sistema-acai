@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
-// Corrigindo os caminhos de importação para serem mais explícitos
+import { useNavigate } from 'react-router-dom';
+import { ArrowLeft, Package } from 'lucide-react';
 import { supabase, isSupabaseConfigured } from '../supabaseClient.js';
 import { useAuth } from '../AuthContext.jsx';
 import './MeusPedidos.css';
 
 function MeusPedidos() {
+  const navigate = useNavigate();
   const [pedidos, setPedidos] = useState([]);
   const [pedidosFiltrados, setPedidosFiltrados] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -108,12 +110,29 @@ function MeusPedidos() {
   }, [pedidos, filtroStatus, buscaTexto]);
 
   if (loading) {
-    return <p className="loading-message">A carregar os seus pedidos...</p>;
+    return (
+      <div className="meus-pedidos-loading">
+        <Package size={48} className="loading-icon" />
+        <p className="loading-message">Carregando seus pedidos...</p>
+      </div>
+    );
   }
 
   return (
-    <div className="painel-admin-container">
-      <h1>Meus Pedidos</h1>
+    <div className="meus-pedidos-wrapper">
+      {/* Header */}
+      <div className="meus-pedidos-header">
+        <button onClick={() => navigate('/')} className="btn-voltar">
+          <ArrowLeft size={20} />
+          Voltar ao Cardápio
+        </button>
+        <h1>
+          <Package size={32} />
+          Meus Pedidos
+        </h1>
+      </div>
+
+      <div className="meus-pedidos-container">
       
       {/* Filtros */}
       <div className="filtros-container">
@@ -158,41 +177,113 @@ function MeusPedidos() {
         <p className="no-orders-message">Ainda não fez nenhum pedido.</p>
       ) : (
         <div className="pedidos-list">
-          {pedidosFiltrados.map((pedido) => (
-            <div 
-              key={pedido.id} 
-              className={`pedido-card status-${(pedido.status || '').replace(/\s+/g, '-').toLowerCase()}`}
-            >
-              <p className="pedido-info"><strong>Horário:</strong> {new Date(pedido.created_at).toLocaleString()}</p>
-              <p className="pedido-info"><strong>Tamanho:</strong> {pedido.detalhes_pedido.tamanho}</p>
-              {pedido.detalhes_pedido.metodo_pagamento && (
-                <p className="pedido-info metodo-pagamento">
-                  <strong>Pagamento:</strong> 
-                  <span className="pagamento-badge">
-                    {pedido.detalhes_pedido.metodo_pagamento === 'Dinheiro' && '💵'}
-                    {pedido.detalhes_pedido.metodo_pagamento === 'Cartão' && '💳'}
-                    {pedido.detalhes_pedido.metodo_pagamento === 'PIX' && '📱'}
-                    {' '}{pedido.detalhes_pedido.metodo_pagamento}
-                  </span>
+          {pedidosFiltrados.map((pedido) => {
+            const detalhes = pedido.detalhes_pedido || {};
+            const dataHora = new Date(pedido.created_at);
+            // Formatar data e hora corretamente (Brasil)
+            const dataFormatada = dataHora.toLocaleDateString('pt-BR', {
+              day: '2-digit',
+              month: '2-digit',
+              year: 'numeric'
+            });
+            const horaFormatada = dataHora.toLocaleTimeString('pt-BR', {
+              hour: '2-digit',
+              minute: '2-digit',
+              second: '2-digit'
+            });
+
+            return (
+              <div 
+                key={pedido.id} 
+                className={`pedido-card status-${(pedido.status || '').replace(/\s+/g, '-').toLowerCase()}`}
+              >
+                <p className="pedido-info"><strong>Horário:</strong> {dataFormatada} às {horaFormatada}</p>
+                
+                {/* Tipo de Açaí */}
+                {detalhes.tipo_acai && (
+                  <p className="pedido-info"><strong>Tipo:</strong> {detalhes.tipo_acai}</p>
+                )}
+                
+                {/* Tamanho */}
+                <p className="pedido-info"><strong>Tamanho:</strong> {detalhes.tamanho}</p>
+                
+                {/* Quantidade */}
+                {detalhes.quantidade && (
+                  <p className="pedido-info"><strong>Quantidade:</strong> {detalhes.quantidade}x</p>
+                )}
+                
+                {/* Método de Pagamento */}
+                {detalhes.metodo_pagamento && (
+                  <p className="pedido-info metodo-pagamento">
+                    <strong>Pagamento:</strong> 
+                    <span className="pagamento-badge">
+                      {detalhes.metodo_pagamento === 'Dinheiro' && '💵'}
+                      {detalhes.metodo_pagamento === 'Cartão' && '💳'}
+                      {detalhes.metodo_pagamento === 'PIX' && '📱'}
+                      {' '}{detalhes.metodo_pagamento}
+                    </span>
+                  </p>
+                )}
+                
+                {/* Complementos Inclusos (Padrão) */}
+                {detalhes.complementos_padrao && detalhes.complementos_padrao.length > 0 && (
+                  <div className="complementos-section">
+                    <strong>✅ Inclusos:</strong>
+                    <ul className="complementos-list">
+                      {detalhes.complementos_padrao.map((item, index) => (
+                        <li key={index} style={{color: '#22c55e'}}>{item}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+                
+                {/* Complementos Removidos */}
+                {detalhes.complementos_removidos && detalhes.complementos_removidos.length > 0 && (
+                  <div className="complementos-section">
+                    <strong>❌ Removidos:</strong>
+                    <ul className="complementos-list">
+                      {detalhes.complementos_removidos.map((item, index) => (
+                        <li key={index} style={{color: '#ef4444', textDecoration: 'line-through'}}>{item}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+                
+                {/* Complementos Adicionais */}
+                <div className="complementos-section">
+                  <strong>🎨 Complementos Adicionais:</strong>
+                  <ul className="complementos-list">
+                    {detalhes.complementos_adicionais && detalhes.complementos_adicionais.length > 0 ? 
+                      detalhes.complementos_adicionais.map((item, index) => (
+                        <li key={index}>
+                          {typeof item === 'object' ? `${item.nome} (+R$ ${item.preco?.toFixed(2)})` : item}
+                        </li>
+                      ))
+                      : <li style={{color: '#888'}}>Nenhum complemento adicional</li>
+                    }
+                  </ul>
+                </div>
+                
+                {/* Açaí Grátis */}
+                {detalhes.usou_acai_gratis && (
+                  <p className="pedido-info" style={{color: '#22c55e', fontWeight: 'bold'}}>
+                    🎉 Usou açaí grátis!
+                  </p>
+                )}
+                
+                {/* Total */}
+                <p className="pedido-info total-pedido"><strong>Total:</strong> R$ {parseFloat(detalhes.total || 0).toFixed(2)}</p>
+                
+                {/* Status */}
+                <p className="pedido-info status-pedido">
+                  <strong>Status:</strong> <span className="status-text">{pedido.status}</span>
                 </p>
-              )}
-              <div className="complementos-section">
-                <strong>Complementos:</strong>
-                <ul className="complementos-list">
-                  {pedido.detalhes_pedido.complementos && pedido.detalhes_pedido.complementos.length > 0 ? 
-                    pedido.detalhes_pedido.complementos.map((item, index) => <li key={index}>{item}</li>)
-                    : <li>Nenhum complemento</li>
-                  }
-                </ul>
               </div>
-              <p className="pedido-info total-pedido"><strong>Total:</strong> R$ {parseFloat(pedido.detalhes_pedido.total || 0).toFixed(2)}</p>
-              <p className="pedido-info status-pedido">
-                <strong>Status:</strong> <span className="status-text">{pedido.status}</span>
-              </p>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
+      </div>
     </div>
   );
 }

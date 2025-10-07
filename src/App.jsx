@@ -2,11 +2,13 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from './AuthContext';
+import NotificationProvider from './components/NotificationToast';
 
 // Importação de todos os componentes de página
 import HomePage from './components/HomePage';
 import Login from './components/Login';
 import SignUp from './components/SignUp'; // Página de Cadastro
+import EmailConfirmado from './components/EmailConfirmado'; // Página de confirmação de email
 import PainelAdmin from './components/PainelAdmin';
 import CatalogoAdmin from './components/CatalogoAdmin';
 import MeusPedidos from './components/MeusPedidos';
@@ -52,7 +54,7 @@ function Navigation() {
         {/* Logo/Brand */}
         <div className="nav-brand">
           <span className="brand-icon">🍇</span>
-          <span className="brand-text">AçaíSystem</span>
+          <span className="brand-text">AçaíExpress</span>
         </div>
 
         {/* Desktop Menu */}
@@ -231,19 +233,21 @@ function App() {
   const envMissing = !import.meta.env.VITE_SUPABASE_URL || !import.meta.env.VITE_SUPABASE_ANON_KEY;
 
   return (
-    <BrowserRouter basename="/sistema-acai">
+    <NotificationProvider>
+      <BrowserRouter basename="/sistema-acai">
       {envMissing && (
         <div className="env-warning">
           Supabase não configurado. Crie o arquivo .env com VITE_SUPABASE_URL e VITE_SUPABASE_ANON_KEY (veja .env.example) e reinicie o servidor.
         </div>
       )}
-      <Navigation />
+      {/* <Navigation /> */}
       <div className="main-content">
         <Routes>
           {/* Rotas Públicas */}
           <Route path="/" element={<HomePage />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<SignUp />} />
+          <Route path="/email-confirmado" element={<EmailConfirmado />} />
           <Route path="/_debug" element={<DebugEnv />} />
 
           {/* Rota Protegida para Administradores */}
@@ -263,7 +267,8 @@ function App() {
           />
         </Routes>
       </div>
-    </BrowserRouter>
+      </BrowserRouter>
+    </NotificationProvider>
   );
 }
 

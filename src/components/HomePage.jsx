@@ -2,7 +2,7 @@
 import React, { useEffect } from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '../AuthContext';
-import Cardapio from './Cardapio';
+import Cardapio from './Cardapio_v2'; // ✅ Usando novo cardápio moderno
 
 function HomePage() {
   const { userRole, loading, session, fetchUserRole } = useAuth();

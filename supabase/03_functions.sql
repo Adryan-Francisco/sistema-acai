@@ -17,6 +17,7 @@ returns uuid
 language plpgsql security definer set search_path = public as $$
 declare
   novo_id uuid;
+  cliente_nome text;
   cliente_email text;
 begin
   -- Verificar autenticação
@@ -24,20 +25,39 @@ begin
     raise exception 'Usuário não autenticado';
   end if;
   
-  -- Obter email do usuário autenticado
-  select email 
-  from auth.users 
+  -- Buscar nome do perfil do usuário
+  select nome, email
+  from public.profiles 
   where id = auth.uid() 
-  into cliente_email;
+  into cliente_nome, cliente_email;
   
-  -- Se não conseguir o email, usar um padrão
-  if cliente_email is null then
-    cliente_email := 'cliente@email.com';
+  -- Se não encontrar o nome no perfil, buscar do auth.users
+  if cliente_nome is null or cliente_nome = '' then
+    select 
+      coalesce(
+        raw_user_meta_data->>'name',
+        raw_user_meta_data->>'full_name',
+        email
+      )
+    from auth.users 
+    where id = auth.uid() 
+    into cliente_nome;
   end if;
   
-  -- Criar o pedido
-  insert into public.pedidos (user_id, nome_cliente, detalhes_pedido, status)
-  values (auth.uid(), cliente_email, p_detalhes, 'Recebido')
+  -- Se ainda não tiver nome, usar email
+  if cliente_nome is null or cliente_nome = '' then
+    cliente_nome := coalesce(cliente_email, 'Cliente');
+  end if;
+  
+  -- Criar o pedido com timezone do Brasil
+  insert into public.pedidos (user_id, nome_cliente, detalhes_pedido, status, created_at)
+  values (
+    auth.uid(), 
+    cliente_nome, 
+    p_detalhes, 
+    'Recebido',
+    timezone('America/Sao_Paulo', now())
+  )
   returning id into novo_id;
   
   return novo_id;
