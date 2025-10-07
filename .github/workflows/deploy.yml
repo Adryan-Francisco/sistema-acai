@@ -6,16 +6,10 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
-  pages: write
-  id-token: write
-
-concurrency:
-  group: "pages"
-  cancel-in-progress: false
+  contents: write
 
 jobs:
-  build:
+  build-and-deploy:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
@@ -30,51 +24,20 @@ jobs:
     - name: Install dependencies
       run: npm ci
       
-    - name: Setup environment variables
+    - name: Create .env file
       run: |
-        if [ -n "${{ secrets.VITE_SUPABASE_URL }}" ]; then
-          echo "✅ Usando secrets configurados"
-          echo "VITE_SUPABASE_URL=${{ secrets.VITE_SUPABASE_URL }}" > .env
-          echo "VITE_SUPABASE_ANON_KEY=${{ secrets.VITE_SUPABASE_ANON_KEY }}" >> .env
-        else
-          echo "⚠️ Secrets não configurados - copiando .env.example"
-          cp .env.example .env
-        fi
-        cat .env
-      shell: bash
+        echo "VITE_SUPABASE_URL=${{ secrets.VITE_SUPABASE_URL || 'https://placeholder.supabase.co' }}" > .env
+        echo "VITE_SUPABASE_ANON_KEY=${{ secrets.VITE_SUPABASE_ANON_KEY || 'placeholder-key' }}" >> .env
       
     - name: Build
       run: npm run build
       env:
         CI: false
-      
-    - name: Verify build output
-      run: |
-        echo "📦 Arquivos gerados:"
-        ls -la dist/
-        echo "📄 Verificando index.html:"
-        ls -la dist/index.html
-      
-    - name: Setup Pages
-      uses: actions/configure-pages@v4
-      
-    - name: Upload artifact
-      uses: actions/upload-pages-artifact@v3
+        
+    - name: Deploy to gh-pages
+      uses: peaceiris/actions-gh-pages@v3
       with:
-        path: './dist'
-
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
-    - name: Deploy to GitHub Pages
-      id: deployment
-      uses: actions/deploy-pages@v4
-      
-    - name: Deployment Summary
-      run: |
-        echo "✅ Deploy concluído com sucesso!"
-        echo "🌐 URL: ${{ steps.deployment.outputs.page_url }}"
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./dist
+        publish_branch: gh-pages
+        cname: false
