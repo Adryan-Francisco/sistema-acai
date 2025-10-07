@@ -10,38 +10,59 @@ const isPlaceholder = (value) => !value || value.includes('placeholder') || valu
 const hasEnv = Boolean(supabaseUrl && supabaseAnonKey && !isPlaceholder(supabaseUrl) && !isPlaceholder(supabaseAnonKey));
 
 function createStubClient(reason = 'Supabase não configurado (.env ausente)') {
-	const err = new Error(
-		`${reason}. Configure VITE_SUPABASE_URL e VITE_SUPABASE_ANON_KEY no .env (veja .env.example) e reinicie o servidor.`
-	);
+	console.warn(`${reason}. Configure VITE_SUPABASE_URL e VITE_SUPABASE_ANON_KEY no .env (veja .env.example)`);
 
-	const rpc = async () => ({ data: null, error: err });
+	// Retorna sucesso vazio ao invés de erro para não quebrar a aplicação
+	const successEmpty = { data: null, error: null };
+	
+	const rpc = async () => successEmpty;
 	const from = () => ({
 		select: () => ({
-			order: async () => ({ data: null, error: err })
-		})
+			eq: () => ({
+				single: async () => successEmpty,
+				order: async () => ({ data: [], error: null })
+			}),
+			order: async () => ({ data: [], error: null }),
+			single: async () => successEmpty
+		}),
+		insert: async () => successEmpty,
+		update: async () => successEmpty,
+		delete: async () => successEmpty
 	});
 
 	const auth = {
 		async getSession() {
-			// Não quebra a app; devolve sessão nula
 			return { data: { session: null }, error: null };
 		},
-		onAuthStateChange() {
-			// Retorna um subscription no-op para evitar erros de unsubscribe
-			return { data: { subscription: { unsubscribe() {} } } };
+		async getUser() {
+			return { data: { user: null }, error: null };
 		},
-		async signOut() { return { error: null }; },
+		async signInWithPassword() {
+			return { data: { session: null, user: null }, error: { message: 'Supabase não configurado. Configure as credenciais.' } };
+		},
+		async signUp() {
+			return { data: { session: null, user: null }, error: { message: 'Supabase não configurado. Configure as credenciais.' } };
+		},
+		async signOut() {
+			return { error: null };
+		},
+		onAuthStateChange(callback) {
+			// Chama imediatamente com sessão nula
+			if (callback) callback('SIGNED_OUT', null);
+			return { data: { subscription: { unsubscribe() {} } } };
+		}
 	};
 
-		const channel = function () {
-			return {
-				on() { return this; },
-				subscribe() { return { unsubscribe() {} }; }
-			};
+	const channel = function () {
+		return {
+			on() { return this; },
+			subscribe() { return { unsubscribe() {} }; }
 		};
-		const removeChannel = function () { /* no-op */ };
+	};
+	
+	const removeChannel = function () { /* no-op */ };
 
-		return { rpc, from, auth, channel, removeChannel };
+	return { rpc, from, auth, channel, removeChannel };
 }
 
 if (!hasEnv) {
