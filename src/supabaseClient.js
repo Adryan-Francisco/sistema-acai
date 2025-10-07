@@ -5,7 +5,9 @@ import { createClient } from '@supabase/supabase-js'
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-const hasEnv = Boolean(supabaseUrl && supabaseAnonKey);
+// Verifica se as variáveis existem E não são placeholders
+const isPlaceholder = (value) => !value || value.includes('placeholder') || value.includes('your-');
+const hasEnv = Boolean(supabaseUrl && supabaseAnonKey && !isPlaceholder(supabaseUrl) && !isPlaceholder(supabaseAnonKey));
 
 function createStubClient(reason = 'Supabase não configurado (.env ausente)') {
 	const err = new Error(
