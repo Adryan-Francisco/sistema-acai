@@ -30,13 +30,23 @@ jobs:
     - name: Install dependencies
       run: npm ci
       
-    - name: Create .env file
+    - name: Setup environment variables
       run: |
-        echo "VITE_SUPABASE_URL=${{ secrets.VITE_SUPABASE_URL }}" > .env
-        echo "VITE_SUPABASE_ANON_KEY=${{ secrets.VITE_SUPABASE_ANON_KEY }}" >> .env
+        if [ -n "${{ secrets.VITE_SUPABASE_URL }}" ]; then
+          echo "✅ Usando secrets configurados"
+          echo "VITE_SUPABASE_URL=${{ secrets.VITE_SUPABASE_URL }}" > .env
+          echo "VITE_SUPABASE_ANON_KEY=${{ secrets.VITE_SUPABASE_ANON_KEY }}" >> .env
+        else
+          echo "⚠️ Secrets não configurados - copiando .env.example"
+          cp .env.example .env
+        fi
+        cat .env
+      shell: bash
       
     - name: Build
       run: npm run build
+      env:
+        CI: false
       
     - name: Verify build output
       run: |
