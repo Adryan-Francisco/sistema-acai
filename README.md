@@ -284,4 +284,5 @@ Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para ma
 
 **Desenvolvido com ❤️ para açaiterias modernas**
 
-**Versão**: 2.0.0 | **Status**: ✅ Produção | **Última atualização**: Outubro 2025
+**Versão**: 2.0.0 | **Status**: ✅ Produção | **Última atualização**: Outubro 2025D e p l o y   c o m   S u p a b a s e   c o n f i g u r a d o  
+ 
