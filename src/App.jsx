@@ -75,14 +75,24 @@ function Navigation() {
           
           {/* Mostra o link "Meus Pedidos" se for um cliente logado */}
           {session && userRole === 'cliente' && (
-            <NavLink 
-              to="/meus-pedidos" 
-              className={({ isActive }) => `nav-link ${isActive ? 'nav-active' : ''}`}
-              onClick={closeMobileMenu}
-            >
-              <span className="nav-icon">📋</span>
-              <span className="nav-text">Meus Pedidos</span>
-            </NavLink>
+            <>
+              <NavLink 
+                to="/meus-pedidos" 
+                className={({ isActive }) => `nav-link ${isActive ? 'nav-active' : ''}`}
+                onClick={closeMobileMenu}
+              >
+                <span className="nav-icon">📋</span>
+                <span className="nav-text">Meus Pedidos</span>
+              </NavLink>
+              <NavLink 
+                to="/resgatar-acai" 
+                className={({ isActive }) => `nav-link ${isActive ? 'nav-active' : ''}`}
+                onClick={closeMobileMenu}
+              >
+                <span className="nav-icon">🎁</span>
+                <span className="nav-text">Resgatar Açaí</span>
+              </NavLink>
+            </>
           )}
 
           {/* Mostra o link do Painel se for um admin logado */}
@@ -164,14 +174,24 @@ function Navigation() {
             )}
             
             {session && userRole === 'cliente' && (
-              <NavLink 
-                to="/meus-pedidos" 
-                className={({ isActive }) => `mobile-nav-link ${isActive ? 'nav-active' : ''}`}
-                onClick={closeMobileMenu}
-              >
-                <span className="nav-icon">📋</span>
-                <span className="nav-text">Meus Pedidos</span>
-              </NavLink>
+              <>
+                <NavLink 
+                  to="/meus-pedidos" 
+                  className={({ isActive }) => `mobile-nav-link ${isActive ? 'nav-active' : ''}`}
+                  onClick={closeMobileMenu}
+                >
+                  <span className="nav-icon">📋</span>
+                  <span className="nav-text">Meus Pedidos</span>
+                </NavLink>
+                <NavLink 
+                  to="/resgatar-acai" 
+                  className={({ isActive }) => `mobile-nav-link ${isActive ? 'nav-active' : ''}`}
+                  onClick={closeMobileMenu}
+                >
+                  <span className="nav-icon">🎁</span>
+                  <span className="nav-text">Resgatar Açaí</span>
+                </NavLink>
+              </>
             )}
 
             {session && userRole === 'admin' && (
@@ -241,7 +261,7 @@ function App() {
           Supabase não configurado. Crie o arquivo .env com VITE_SUPABASE_URL e VITE_SUPABASE_ANON_KEY (veja .env.example) e reinicie o servidor.
         </div>
       )}
-      {/* <Navigation /> */}
+      <Navigation />
       <div className="main-content">
         <Routes>
           {/* Rotas Públicas */}
