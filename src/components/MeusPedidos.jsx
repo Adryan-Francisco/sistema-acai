@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Package } from 'lucide-react';
+import { ArrowLeft, Package, Star } from 'lucide-react';
 import { supabase, isSupabaseConfigured } from '../supabaseClient.js';
 import { useAuth } from '../AuthContext.jsx';
+import AvaliarPedido from './AvaliarPedido';
 import './MeusPedidos.css';
 
 function MeusPedidos() {
@@ -12,6 +13,7 @@ function MeusPedidos() {
   const [loading, setLoading] = useState(true);
   const [filtroStatus, setFiltroStatus] = useState('todos');
   const [buscaTexto, setBuscaTexto] = useState('');
+  const [pedidoParaAvaliar, setPedidoParaAvaliar] = useState(null);
   const { user, session } = useAuth();
 
   useEffect(() => {
@@ -278,10 +280,48 @@ function MeusPedidos() {
                 <p className="pedido-info status-pedido">
                   <strong>Status:</strong> <span className="status-text">{pedido.status}</span>
                 </p>
+
+                {/* Botão de Avaliar */}
+                {pedido.status === 'Concluído' && !pedido.avaliado && (
+                  <button 
+                    className="btn-avaliar"
+                    onClick={() => setPedidoParaAvaliar(pedido)}
+                  >
+                    <Star size={18} />
+                    Avaliar Pedido
+                  </button>
+                )}
+
+                {pedido.avaliado && (
+                  <p className="pedido-avaliado">
+                    ⭐ Pedido já avaliado - Obrigado!
+                  </p>
+                )}
               </div>
             );
           })}
         </div>
+      )}
+
+      {/* Modal de Avaliação */}
+      {pedidoParaAvaliar && (
+        <AvaliarPedido
+          pedido={pedidoParaAvaliar}
+          onClose={() => setPedidoParaAvaliar(null)}
+          onAvaliacaoEnviada={() => {
+            // Recarregar pedidos para atualizar o status
+            const fetchPedidos = async () => {
+              const { data } = await supabase
+                .from('pedidos')
+                .select('*')
+                .eq('user_id', user.id)
+                .order('created_at', { ascending: false });
+              setPedidos(data || []);
+              setPedidosFiltrados(data || []);
+            };
+            fetchPedidos();
+          }}
+        />
       )}
       </div>
     </div>

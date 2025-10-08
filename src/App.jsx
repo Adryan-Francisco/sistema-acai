@@ -11,6 +11,7 @@ import SignUp from './components/SignUp'; // Página de Cadastro
 import EmailConfirmado from './components/EmailConfirmado'; // Página de confirmação de email
 import PainelAdmin from './components/PainelAdmin';
 import CatalogoAdmin from './components/CatalogoAdmin';
+import DashboardAdmin from './components/DashboardAdmin';
 import MeusPedidos from './components/MeusPedidos';
 import ResgatarAcai from './components/ResgatarAcai';
 import DebugEnv from './components/DebugEnv';
@@ -279,6 +280,10 @@ function App() {
           <Route
             path="/admin/catalogo"
             element={ <ProtectedRoute> <CatalogoAdmin /> </ProtectedRoute> }
+          />
+          <Route
+            path="/admin/dashboard"
+            element={ <ProtectedRoute> <DashboardAdmin /> </ProtectedRoute> }
           />
           
           {/* Rota Protegida para Clientes Logados */}

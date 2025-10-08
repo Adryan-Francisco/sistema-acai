@@ -443,6 +443,14 @@ function PainelAdmin() {
           </div>
           <div className="header-actions">
             <button 
+              onClick={() => navigate('/admin/dashboard')}
+              className="btn-header btn-dashboard"
+              title="Ver Dashboard de Estatísticas"
+            >
+              <ChefHat size={18} />
+              <span className="btn-text">Dashboard</span>
+            </button>
+            <button 
               onClick={handleRefresh} 
               className="btn-header btn-refresh"
               disabled={refreshing}
