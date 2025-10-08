@@ -539,14 +539,6 @@ export default function CardapioV2() {
             <span>✨ {availableFreeAcais} açaí(s) grátis disponível(is)</span>
             <span>{10 - (fidelityPoints % 10)} pontos para o próximo açaí grátis</span>
           </div>
-          {fidelityPoints >= 10 && (
-            <button 
-              onClick={() => window.location.href = '/sistema-acai/resgatar-acai'} 
-              className="btn-resgatar-fidelidade"
-            >
-              🎁 Resgatar Açaí Grátis
-            </button>
-          )}
         </div>
       )}
 
