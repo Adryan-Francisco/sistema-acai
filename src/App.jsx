@@ -261,7 +261,7 @@ function App() {
           Supabase não configurado. Crie o arquivo .env com VITE_SUPABASE_URL e VITE_SUPABASE_ANON_KEY (veja .env.example) e reinicie o servidor.
         </div>
       )}
-      <Navigation />
+      {/* <Navigation /> */}
       <div className="main-content">
         <Routes>
           {/* Rotas Públicas */}
