@@ -519,29 +519,6 @@ export default function CardapioV2() {
         </div>
       </section>
 
-      {/* Barra de Progresso de Fidelidade */}
-      {user && (
-        <div className="fidelity-progress-bar">
-          <div className="fidelity-progress-header">
-            <span className="fidelity-progress-title">
-              <Star size={16} fill="currentColor" />
-              Programa de Fidelidade
-            </span>
-            <span className="fidelity-progress-count">{fidelityPoints % 10}/10 pontos</span>
-          </div>
-          <div className="fidelity-progress-track">
-            <div 
-              className="fidelity-progress-fill" 
-              style={{ width: `${(fidelityPoints % 10) * 10}%` }}
-            />
-          </div>
-          <div className="fidelity-progress-info">
-            <span>✨ {availableFreeAcais} açaí(s) grátis disponível(is)</span>
-            <span>{10 - (fidelityPoints % 10)} pontos para o próximo açaí grátis</span>
-          </div>
-        </div>
-      )}
-
       {/* Modal de Preview do Pedido */}
       {showPreview && (
         <div className="modal-overlay" onClick={() => setShowPreview(false)}>

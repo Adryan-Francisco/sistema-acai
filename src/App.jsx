@@ -14,6 +14,7 @@ import CatalogoAdmin from './components/CatalogoAdmin';
 import DashboardAdmin from './components/DashboardAdmin';
 import MeusPedidos from './components/MeusPedidos';
 import ResgatarAcai from './components/ResgatarAcai';
+import ProgramaFidelidade from './components/ProgramaFidelidade';
 import DebugEnv from './components/DebugEnv';
 
 // Importação dos componentes de proteção de rota
@@ -294,6 +295,10 @@ function App() {
           <Route
             path="/resgatar-acai"
             element={ <AuthenticatedRoute> <ResgatarAcai /> </AuthenticatedRoute> }
+          />
+          <Route
+            path="/fidelidade"
+            element={ <AuthenticatedRoute> <ProgramaFidelidade /> </AuthenticatedRoute> }
           />
         </Routes>
       </div>
