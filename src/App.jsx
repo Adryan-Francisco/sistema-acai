@@ -12,6 +12,7 @@ import EmailConfirmado from './components/EmailConfirmado'; // Página de confir
 import PainelAdmin from './components/PainelAdmin';
 import CatalogoAdmin from './components/CatalogoAdmin';
 import MeusPedidos from './components/MeusPedidos';
+import ResgatarAcai from './components/ResgatarAcai';
 import DebugEnv from './components/DebugEnv';
 
 // Importação dos componentes de proteção de rota
@@ -264,6 +265,10 @@ function App() {
           <Route
             path="/meus-pedidos"
             element={ <AuthenticatedRoute> <MeusPedidos /> </AuthenticatedRoute> }
+          />
+          <Route
+            path="/resgatar-acai"
+            element={ <AuthenticatedRoute> <ResgatarAcai /> </AuthenticatedRoute> }
           />
         </Routes>
       </div>
