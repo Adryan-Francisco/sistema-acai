@@ -1,9 +1,10 @@
 // src/components/PainelAdmin.jsx
 import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Clock, Package, DollarSign, ChefHat, CheckCircle, XCircle, RefreshCw, LogOut, Printer } from 'lucide-react';
+import { Clock, Package, DollarSign, ChefHat, CheckCircle, XCircle, RefreshCw, LogOut, Printer, Bell } from 'lucide-react';
 import { supabase, isSupabaseConfigured } from '../supabaseClient';
 import { useAuth } from '../AuthContext';
+import { playNotificationSound } from '../utils/notificationSound';
 import './PainelAdmin.css';
 
 function PainelAdmin() {
@@ -14,6 +15,7 @@ function PainelAdmin() {
   const [refreshing, setRefreshing] = useState(false);
   const [filtroStatus, setFiltroStatus] = useState('ativos');
   const [adminMessage, setAdminMessage] = useState(null);
+  const [newOrdersCount, setNewOrdersCount] = useState(0);
 
   // Função para fazer logout
   const handleLogout = async () => {
@@ -347,30 +349,84 @@ function PainelAdmin() {
     }
   };
   
+  // Carregar pedidos inicialmente
   useEffect(() => {
     const fetchPedidos = async () => {
       if (!isSupabaseConfigured) {
         setLoading(false);
         return;
       }
-      const { data, error } = await supabase.from('pedidos').select('*').order('created_at', { ascending: false });
+      const { data, error } = await supabase
+        .from('pedidos')
+        .select('*')
+        .order('created_at', { ascending: false });
+      
       if (error) console.error('Erro ao buscar pedidos:', error);
-      else setPedidos(data);
+      else setPedidos(data || []);
       setLoading(false);
     };
     
     fetchPedidos();
-  if (!isSupabaseConfigured) return;
-  const channel = supabase.channel('pedidos_realtime').on('postgres_changes', { event: '*', schema: 'public', table: 'pedidos' }, (payload) => {
+  }, []);
+
+  // Notificações em Tempo Real com Supabase Realtime
+  useEffect(() => {
+    if (!isSupabaseConfigured) return;
+    
+    const channel = supabase
+      .channel('pedidos_realtime')
+      .on('postgres_changes', { 
+        event: '*', 
+        schema: 'public', 
+        table: 'pedidos' 
+      }, (payload) => {
+        console.log('📡 Mudança detectada:', payload);
+        
         if (payload.eventType === 'INSERT') {
+          // Novo pedido recebido!
           setPedidos((prevPedidos) => [payload.new, ...prevPedidos]);
-          new Audio('/notification.mp3').play().catch(e => console.error("Erro ao tocar som:", e));
+          setNewOrdersCount(prev => prev + 1);
+          
+          // Tocar som de notificação
+          playNotificationSound();
+          
+          // Mostrar mensagem
+          setAdminMessage({ 
+            type: 'info', 
+            text: `🔔 Novo pedido recebido de ${payload.new.nome_cliente || 'Cliente'}!` 
+          });
+          
+          // Vibrar (se disponível)
+          if ('vibrate' in navigator) {
+            navigator.vibrate([200, 100, 200]);
+          }
+          
+          setTimeout(() => setAdminMessage(null), 5000);
         }
+        
         if (payload.eventType === 'UPDATE') {
-          setPedidos((prevPedidos) => prevPedidos.map((pedido) => pedido.id === payload.new.id ? payload.new : pedido));
+          // Pedido atualizado
+          setPedidos((prevPedidos) => 
+            prevPedidos.map((pedido) => 
+              pedido.id === payload.new.id ? payload.new : pedido
+            )
+          );
         }
-      }).subscribe();
-  return () => { if (channel) supabase.removeChannel(channel); };
+        
+        if (payload.eventType === 'DELETE') {
+          // Pedido deletado
+          setPedidos((prevPedidos) => 
+            prevPedidos.filter((pedido) => pedido.id !== payload.old.id)
+          );
+        }
+      })
+      .subscribe((status) => {
+        console.log('📡 Status da conexão Realtime:', status);
+      });
+    
+    return () => { 
+      if (channel) supabase.removeChannel(channel); 
+    };
   }, []);
 
   const renderActionButtons = (pedido) => {
@@ -442,6 +498,13 @@ function PainelAdmin() {
             </div>
           </div>
           <div className="header-actions">
+            {newOrdersCount > 0 && (
+              <div className="new-orders-badge pulse">
+                <Bell size={18} />
+                <span className="badge-count">{newOrdersCount}</span>
+                <span className="badge-text">Novo{newOrdersCount > 1 ? 's' : ''} Pedido{newOrdersCount > 1 ? 's' : ''}!</span>
+              </div>
+            )}
             <button 
               onClick={() => navigate('/admin/dashboard')}
               className="btn-header btn-dashboard"
@@ -451,7 +514,10 @@ function PainelAdmin() {
               <span className="btn-text">Dashboard</span>
             </button>
             <button 
-              onClick={handleRefresh} 
+              onClick={() => {
+                handleRefresh();
+                setNewOrdersCount(0); // Resetar contador ao atualizar
+              }} 
               className="btn-header btn-refresh"
               disabled={refreshing}
               title="Atualizar lista de pedidos"

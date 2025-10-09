@@ -314,6 +314,14 @@ export default function CardapioV2() {
           </div>
           <div className="cardapio-v2-header-actions">
             <button 
+              onClick={() => navigate('/fidelidade')} 
+              className="button-outline button-sm btn-fidelidade"
+              title="Programa de Fidelidade"
+            >
+              <Star size={16} fill="currentColor" />
+              Fidelidade
+            </button>
+            <button 
               onClick={() => navigate('/meus-pedidos')} 
               className="button-outline button-sm"
               title="Meus Pedidos"
