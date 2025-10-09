@@ -7,6 +7,7 @@ import { supabase } from '../supabaseClient.js'
 import { useAuth } from '../AuthContext.jsx'
 import { useNotification } from './NotificationToast.jsx'
 import ThemeToggle from './ThemeToggle.jsx'
+import PixPayment from './PixPayment.jsx'
 import './Cardapio_v2.css'
 
 export default function CardapioV2() {
@@ -30,8 +31,7 @@ export default function CardapioV2() {
   const [deliveryAddress, setDeliveryAddress] = useState("") // Endereço de entrega
   const [showPreview, setShowPreview] = useState(false)
   const [showPixModal, setShowPixModal] = useState(false)
-  const [pixCopied, setPixCopied] = useState(false)
-  const [pixCode, setPixCode] = useState("")
+  const [currentOrderId, setCurrentOrderId] = useState(null)
   
   // Estado da loja
   const [lojaAberta, setLojaAberta] = useState(true)
@@ -290,36 +290,8 @@ export default function CardapioV2() {
     setShowPreview(true)
   }
 
-  const generatePixCode = (valor) => {
-    // Código PIX simplificado (EMV)
-    // Em produção, use uma API real de PIX
-    const chavePix = "17 99742-2922" // Substitua pela sua chave PIX real
-    const nomeRecebedor = "TIADÊ AÇAITERIA" 
-    const cidade = "ASPÁSIA"
-    
-    // Formato simplificado - em produção use biblioteca específica
-    return `00020126580014br.gov.bcb.pix0136${chavePix}52040000530398654${valor.toFixed(2).padStart(10, '0')}5802BR5913${nomeRecebedor}6009${cidade}62070503***6304`
-  }
-
-  const handleCopyPixCode = () => {
-    navigator.clipboard.writeText(pixCode)
-    setPixCopied(true)
-    success('Código PIX copiado!')
-    setTimeout(() => setPixCopied(false), 3000)
-  }
-
   const handleOrder = async () => {
     setShowPreview(false)
-    
-    // Se for PIX, mostrar QR Code primeiro
-    if (paymentMethod === 'PIX') {
-      const total = calculateTotal()
-      const code = generatePixCode(total)
-      setPixCode(code)
-      setShowPixModal(true)
-      return
-    }
-    
     await processOrder()
   }
 
@@ -333,7 +305,7 @@ export default function CardapioV2() {
         .map((dt) => dt.name) || []
 
       // Criar pedido
-      const { error: orderError } = await supabase.from('pedidos').insert([
+      const { data: orderData, error: orderError } = await supabase.from('pedidos').insert([
         {
           usuario_id: user.id,
           nome_cliente: userName || user.email?.split('@')[0] || 'Cliente',
@@ -358,11 +330,19 @@ export default function CardapioV2() {
             metodo_pagamento: paymentMethod,
             usou_acai_gratis: useFreeAcai,
           },
-          status: 'Recebido',
+          status: paymentMethod === 'PIX' ? 'Aguardando Pagamento' : 'Recebido',
         },
-      ])
+      ]).select()
 
       if (orderError) throw orderError
+
+      // Se for PIX, abrir modal e salvar ID do pedido
+      if (paymentMethod === 'PIX' && orderData && orderData[0]) {
+        setCurrentOrderId(orderData[0].id)
+        setShowPixModal(true)
+        setLoading(false)
+        return
+      }
 
       // Atualizar fidelidade
       const newPoints = useFreeAcai 
@@ -428,6 +408,81 @@ export default function CardapioV2() {
       showError('Erro ao criar pedido. Tente novamente.')
     } finally {
       setLoading(false)
+    }
+  }
+
+  // Função chamada quando pagamento PIX é confirmado
+  const handlePixPaymentConfirmed = async () => {
+    try {
+      // Atualizar status do pedido
+      await supabase
+        .from('pedidos')
+        .update({ status: 'Recebido' })
+        .eq('id', currentOrderId)
+
+      // Atualizar fidelidade
+      const newPoints = useFreeAcai 
+        ? fidelityPoints + (quantity > 1 ? quantity - 1 : 0)
+        : fidelityPoints + quantity
+
+      const newFreeAcais = Math.floor(newPoints / 10)
+      const currentFreeAcais = useFreeAcai ? availableFreeAcais - 1 : availableFreeAcais
+
+      await supabase
+        .from('profiles')
+        .update({
+          pontos_fidelidade: newPoints,
+          acais_gratis: Math.max(0, newFreeAcais)
+        })
+        .eq('id', user.id)
+
+      // Verificar se ganhou açaí grátis
+      if (newFreeAcais > currentFreeAcais) {
+        const gained = newFreeAcais - currentFreeAcais
+        success(`Pedido criado! 🎉 Você ganhou ${gained} açaí(s) grátis!`, { duration: 5000 })
+        
+        confetti({
+          particleCount: 150,
+          spread: 100,
+          origin: { y: 0.6 },
+          colors: ['#9333ea', '#fbbf24', '#10b981', '#f59e0b']
+        })
+      } else {
+        success('Pedido criado com sucesso!', { duration: 3000 })
+        
+        confetti({
+          particleCount: 100,
+          spread: 70,
+          origin: { y: 0.6 },
+          colors: ['#9333ea', '#a855f7', '#c084fc']
+        })
+      }
+
+      // Atualizar estado local
+      setFidelityPoints(newPoints)
+      setAvailableFreeAcais(Math.max(0, newFreeAcais))
+
+      // Limpar formulário
+      setSelectedToppings([])
+      setQuantity(1)
+      setUseFreeAcai(false)
+      setPaymentMethod("")
+      setShowPixModal(false)
+      setCurrentOrderId(null)
+      
+      const currentTypeData = acaiTypes.find((t) => t.value === selectedType)
+      if (currentTypeData?.defaultToppings) {
+        setSelectedDefaultToppings(currentTypeData.defaultToppings.map((t) => t.id))
+      }
+
+      // Redirecionar após 2 segundos
+      setTimeout(() => {
+        navigate('/meus-pedidos')
+      }, 2000)
+
+    } catch (err) {
+      console.error('Erro ao confirmar pagamento PIX:', err)
+      showError('Erro ao confirmar pagamento. Tente novamente.')
     }
   }
 
@@ -863,79 +918,16 @@ export default function CardapioV2() {
       )}
 
       {/* Modal do PIX */}
-      {showPixModal && (
-        <div className="modal-overlay" onClick={() => setShowPixModal(false)}>
-          <div className="modal-content pix-modal" onClick={(e) => e.stopPropagation()}>
-            <div className="modal-header">
-              <h3>💳 Pagamento via PIX</h3>
-              <button onClick={() => setShowPixModal(false)} className="modal-close">
-                <X size={24} />
-              </button>
-            </div>
-            <div className="modal-body pix-modal-body">
-              <div className="pix-instructions">
-                <p>Escaneie o QR Code abaixo com o app do seu banco</p>
-                <p className="pix-amount">Valor: R$ {calculateTotal().toFixed(2)}</p>
-              </div>
-              
-              <div className="pix-qrcode-container">
-                <QRCodeSVG 
-                  value={pixCode}
-                  size={256}
-                  level="H"
-                  includeMargin={true}
-                  className="pix-qrcode"
-                />
-              </div>
-
-              <div className="pix-divider">
-                <span>ou</span>
-              </div>
-
-              <div className="pix-code-section">
-                <label>Copie o código PIX:</label>
-                <div className="pix-code-box">
-                  <input 
-                    type="text" 
-                    value={pixCode} 
-                    readOnly 
-                    className="pix-code-input"
-                  />
-                  <button 
-                    onClick={handleCopyPixCode} 
-                    className="pix-copy-button"
-                    title="Copiar código PIX"
-                  >
-                    {pixCopied ? <CheckCheck size={20} /> : <Copy size={20} />}
-                  </button>
-                </div>
-                <small className="pix-hint">
-                  {pixCopied ? '✓ Código copiado!' : 'Clique no botão para copiar'}
-                </small>
-              </div>
-
-              <div className="pix-warning">
-                ⚠️ Após efetuar o pagamento, clique em "Confirmar Pagamento" abaixo
-              </div>
-            </div>
-            <div className="modal-footer">
-              <button onClick={() => setShowPixModal(false)} className="button-outline">
-                Cancelar
-              </button>
-              <button 
-                onClick={() => {
-                  setShowPixModal(false)
-                  processOrder()
-                }} 
-                className="button-primary"
-                disabled={loading}
-              >
-                <Check size={18} />
-                {loading ? 'Processando...' : 'Confirmar Pagamento'}
-              </button>
-            </div>
-          </div>
-        </div>
+      {showPixModal && currentOrderId && (
+        <PixPayment
+          amount={calculateTotal()}
+          orderId={currentOrderId}
+          onPaymentConfirmed={handlePixPaymentConfirmed}
+          onClose={() => {
+            setShowPixModal(false)
+            setCurrentOrderId(null)
+          }}
+        />
       )}
     </div>
   )

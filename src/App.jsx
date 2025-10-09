@@ -60,7 +60,7 @@ function Navigation() {
         {/* Logo/Brand */}
         <div className="nav-brand">
           <span className="brand-icon">🍇</span>
-          <span className="brand-text">AçaíExpress</span>
+          <span className="brand-text">Tiadeacaiteria</span>
         </div>
 
         {/* Desktop Menu */}
