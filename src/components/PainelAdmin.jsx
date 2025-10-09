@@ -1,7 +1,7 @@
 // src/components/PainelAdmin.jsx
 import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Clock, Package, DollarSign, ChefHat, CheckCircle, XCircle, RefreshCw, LogOut, Printer, Bell } from 'lucide-react';
+import { Clock, Package, DollarSign, ChefHat, CheckCircle, XCircle, RefreshCw, LogOut, Printer, Bell, Search, Filter, X } from 'lucide-react';
 import { supabase, isSupabaseConfigured } from '../supabaseClient';
 import { useAuth } from '../AuthContext';
 import { playNotificationSound } from '../utils/notificationSound';
@@ -16,6 +16,22 @@ function PainelAdmin() {
   const [filtroStatus, setFiltroStatus] = useState('ativos');
   const [adminMessage, setAdminMessage] = useState(null);
   const [newOrdersCount, setNewOrdersCount] = useState(0);
+  
+  // Novos estados para busca e filtros
+  const [buscaCliente, setBuscaCliente] = useState('');
+  const [mostrarFiltrosAvancados, setMostrarFiltrosAvancados] = useState(false);
+  const [filtroValorMin, setFiltroValorMin] = useState('');
+  const [filtroValorMax, setFiltroValorMax] = useState('');
+  const [filtroDataInicio, setFiltroDataInicio] = useState('');
+  const [filtroDataFim, setFiltroDataFim] = useState('');
+  
+  // Estado para modal de confirmação
+  const [modalConfirmacao, setModalConfirmacao] = useState({ 
+    show: false, 
+    pedidoId: null, 
+    novoStatus: '', 
+    nomeCliente: '' 
+  });
 
   // Função para fazer logout
   const handleLogout = async () => {
@@ -270,16 +286,79 @@ function PainelAdmin() {
 
   // Filtra os pedidos a serem exibidos com base no filtro de status selecionado
   const pedidosFiltrados = useMemo(() => {
-    if (filtroStatus === 'todos') {
-      return pedidos;
-    }
+    let resultado = pedidos;
+    
+    // Filtro por status
     if (filtroStatus === 'ativos') {
-      return pedidos.filter(p => p.status !== 'Finalizado' && p.status !== 'Entregue');
+      resultado = resultado.filter(p => p.status !== 'Finalizado' && p.status !== 'Entregue');
+    } else if (filtroStatus !== 'todos') {
+      resultado = resultado.filter(p => p.status === filtroStatus);
     }
-    return pedidos.filter(p => p.status === filtroStatus);
-  }, [pedidos, filtroStatus]);
+    
+    // Busca por nome do cliente
+    if (buscaCliente.trim()) {
+      resultado = resultado.filter(p => 
+        p.nome_cliente.toLowerCase().includes(buscaCliente.toLowerCase())
+      );
+    }
+    
+    // Filtro por valor mínimo
+    if (filtroValorMin) {
+      resultado = resultado.filter(p => 
+        parseFloat(p.detalhes_pedido.total || 0) >= parseFloat(filtroValorMin)
+      );
+    }
+    
+    // Filtro por valor máximo
+    if (filtroValorMax) {
+      resultado = resultado.filter(p => 
+        parseFloat(p.detalhes_pedido.total || 0) <= parseFloat(filtroValorMax)
+      );
+    }
+    
+    // Filtro por data inicial
+    if (filtroDataInicio) {
+      const dataInicio = new Date(filtroDataInicio).setHours(0, 0, 0, 0);
+      resultado = resultado.filter(p => 
+        new Date(p.created_at).setHours(0, 0, 0, 0) >= dataInicio
+      );
+    }
+    
+    // Filtro por data final
+    if (filtroDataFim) {
+      const dataFim = new Date(filtroDataFim).setHours(23, 59, 59, 999);
+      resultado = resultado.filter(p => 
+        new Date(p.created_at).getTime() <= dataFim
+      );
+    }
+    
+    return resultado;
+  }, [pedidos, filtroStatus, buscaCliente, filtroValorMin, filtroValorMax, filtroDataInicio, filtroDataFim]);
 
   // (O resto das funções como handleUpdateStatus, useEffect e renderActionButtons continua igual)
+  
+  // Função para abrir modal de confirmação
+  const abrirModalConfirmacao = (pedidoId, novoStatus, nomeCliente) => {
+    setModalConfirmacao({ 
+      show: true, 
+      pedidoId, 
+      novoStatus, 
+      nomeCliente 
+    });
+  };
+  
+  // Função para confirmar mudança de status
+  const confirmarMudancaStatus = async () => {
+    const { pedidoId, novoStatus } = modalConfirmacao;
+    await handleUpdateStatus(pedidoId, novoStatus);
+    setModalConfirmacao({ show: false, pedidoId: null, novoStatus: '', nomeCliente: '' });
+  };
+  
+  // Função para cancelar mudança de status
+  const cancelarMudancaStatus = () => {
+    setModalConfirmacao({ show: false, pedidoId: null, novoStatus: '', nomeCliente: '' });
+  };
+  
   const handleUpdateStatus = async (pedidoId, novoStatus) => {
     const pedidosOriginais = [...pedidos];
     
@@ -433,19 +512,19 @@ function PainelAdmin() {
     return (
       <div className="action-buttons-group">
         {pedido.status === 'Recebido' && (
-          <button className="btn-action btn-preparo" onClick={() => handleUpdateStatus(pedido.id, 'Em preparo')}>
+          <button className="btn-action btn-preparo" onClick={() => abrirModalConfirmacao(pedido.id, 'Em preparo', pedido.nome_cliente)}>
             <ChefHat size={18} />
             Iniciar Preparo
           </button>
         )}
         {pedido.status === 'Em preparo' && (
-          <button className="btn-action btn-pronto" onClick={() => handleUpdateStatus(pedido.id, 'Pronto para retirada')}>
+          <button className="btn-action btn-pronto" onClick={() => abrirModalConfirmacao(pedido.id, 'Pronto para retirada', pedido.nome_cliente)}>
             <CheckCircle size={18} />
             Marcar como Pronto
           </button>
         )}
         {(pedido.status === 'Pronto para retirada' || pedido.status === 'Pronto') && (
-          <button className="btn-action btn-finalizado" onClick={() => handleUpdateStatus(pedido.id, 'Finalizado')}>
+          <button className="btn-action btn-finalizado" onClick={() => abrirModalConfirmacao(pedido.id, 'Finalizado', pedido.nome_cliente)}>
             <Package size={18} />
             Finalizar Pedido
           </button>
@@ -567,6 +646,107 @@ function PainelAdmin() {
         <button onClick={() => setFiltroStatus('Finalizado')} className={`filtro-btn ${filtroStatus === 'Finalizado' ? 'active' : ''}`}>Finalizados</button>
         <button onClick={() => setFiltroStatus('todos')} className={`filtro-btn ${filtroStatus === 'todos' ? 'active' : ''}`}>Ver Todos</button>
       </div>
+
+      {/* Barra de Busca e Filtros Avançados */}
+      <div className="busca-filtros-container">
+        <div className="busca-wrapper">
+          <Search size={20} className="busca-icon" />
+          <input
+            type="text"
+            placeholder="Buscar por nome do cliente..."
+            value={buscaCliente}
+            onChange={(e) => setBuscaCliente(e.target.value)}
+            className="busca-input"
+          />
+          {buscaCliente && (
+            <button 
+              className="limpar-busca" 
+              onClick={() => setBuscaCliente('')}
+              title="Limpar busca"
+            >
+              <X size={18} />
+            </button>
+          )}
+        </div>
+        
+        <button 
+          className={`btn-filtros-avancados ${mostrarFiltrosAvancados ? 'active' : ''}`}
+          onClick={() => setMostrarFiltrosAvancados(!mostrarFiltrosAvancados)}
+        >
+          <Filter size={18} />
+          Filtros Avançados
+        </button>
+      </div>
+
+      {/* Painel de Filtros Avançados */}
+      {mostrarFiltrosAvancados && (
+        <div className="filtros-avancados-painel">
+          <div className="filtro-group">
+            <label>Valor Mínimo (R$)</label>
+            <input
+              type="number"
+              min="0"
+              step="0.01"
+              placeholder="Ex: 10.00"
+              value={filtroValorMin}
+              onChange={(e) => setFiltroValorMin(e.target.value)}
+              className="filtro-input"
+            />
+          </div>
+          
+          <div className="filtro-group">
+            <label>Valor Máximo (R$)</label>
+            <input
+              type="number"
+              min="0"
+              step="0.01"
+              placeholder="Ex: 50.00"
+              value={filtroValorMax}
+              onChange={(e) => setFiltroValorMax(e.target.value)}
+              className="filtro-input"
+            />
+          </div>
+          
+          <div className="filtro-group">
+            <label>Data Início</label>
+            <input
+              type="date"
+              value={filtroDataInicio}
+              onChange={(e) => setFiltroDataInicio(e.target.value)}
+              className="filtro-input"
+            />
+          </div>
+          
+          <div className="filtro-group">
+            <label>Data Fim</label>
+            <input
+              type="date"
+              value={filtroDataFim}
+              onChange={(e) => setFiltroDataFim(e.target.value)}
+              className="filtro-input"
+            />
+          </div>
+          
+          <button 
+            className="btn-limpar-filtros"
+            onClick={() => {
+              setFiltroValorMin('');
+              setFiltroValorMax('');
+              setFiltroDataInicio('');
+              setFiltroDataFim('');
+              setBuscaCliente('');
+            }}
+          >
+            <X size={18} />
+            Limpar Todos os Filtros
+          </button>
+        </div>
+      )}
+      
+      {/* Contador de Resultados */}
+      <div className="resultados-info">
+        Exibindo <strong>{pedidosFiltrados.length}</strong> de <strong>{pedidos.length}</strong> pedidos
+      </div>
       
       {/* Lista de Pedidos agora usa 'pedidosFiltrados' */}
       {pedidosFiltrados.length === 0 ? (
@@ -670,6 +850,33 @@ function PainelAdmin() {
         </div>
       )}
       </div>
+
+      {/* Modal de Confirmação */}
+      {modalConfirmacao.show && (
+        <div className="modal-overlay" onClick={cancelarMudancaStatus}>
+          <div className="modal-confirmacao" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3>Confirmar Mudança de Status</h3>
+            </div>
+            <div className="modal-body">
+              <p>Tem certeza que deseja mudar o status do pedido de <strong>{modalConfirmacao.nomeCliente}</strong> para:</p>
+              <div className="novo-status-badge">
+                {modalConfirmacao.novoStatus}
+              </div>
+            </div>
+            <div className="modal-actions">
+              <button className="btn-modal btn-cancelar" onClick={cancelarMudancaStatus}>
+                <X size={18} />
+                Cancelar
+              </button>
+              <button className="btn-modal btn-confirmar" onClick={confirmarMudancaStatus}>
+                <CheckCircle size={18} />
+                Confirmar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
