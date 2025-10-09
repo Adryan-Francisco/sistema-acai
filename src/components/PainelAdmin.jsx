@@ -550,8 +550,31 @@ function PainelAdmin() {
   if (loading) {
     return (
       <div className="painel-loading">
-        <RefreshCw size={48} className="loading-spinner" />
-        <p>Carregando pedidos...</p>
+        <div className="skeleton-container">
+          <div className="skeleton-header">
+            <div className="skeleton-title"></div>
+            <div className="skeleton-subtitle"></div>
+          </div>
+          
+          <div className="skeleton-dashboard">
+            <div className="skeleton-stat-card"></div>
+            <div className="skeleton-stat-card"></div>
+            <div className="skeleton-stat-card"></div>
+          </div>
+          
+          <div className="skeleton-filters"></div>
+          
+          <div className="skeleton-pedidos-list">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="skeleton-pedido-card">
+                <div className="skeleton-line skeleton-line-lg"></div>
+                <div className="skeleton-line skeleton-line-md"></div>
+                <div className="skeleton-line skeleton-line-md"></div>
+                <div className="skeleton-line skeleton-line-sm"></div>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     );
   }

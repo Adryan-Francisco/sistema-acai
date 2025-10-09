@@ -591,6 +591,22 @@
   transform: translateY(0);
 }
 
+/* Pulse animation when cart has items */
+.cardapio-v2-order-button.pulse-button {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 4px 12px oklch(from var(--purple-600) l c h / 0.3);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 6px 20px oklch(from var(--purple-600) l c h / 0.5);
+    transform: scale(1.02);
+  }
+}
+
 /* ============================================
    PAYMENT METHOD
    ============================================ */

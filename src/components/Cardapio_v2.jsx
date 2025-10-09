@@ -2,6 +2,7 @@ import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 import { ShoppingCart, Plus, Minus, LogOut, User, X, Check, Star, Copy, CheckCheck } from "lucide-react"
 import { QRCodeSVG } from 'qrcode.react'
+import confetti from 'canvas-confetti'
 import { supabase } from '../supabaseClient.js'
 import { useAuth } from '../AuthContext.jsx'
 import { useNotification } from './NotificationToast.jsx'
@@ -158,6 +159,10 @@ export default function CardapioV2() {
     return (basePrice + toppingsPrice) * effectiveQuantity
   }
 
+  const hasItemsInCart = () => {
+    return selectedToppings.length > 0 || quantity > 1 || useFreeAcai || paymentMethod
+  }
+
   const handlePreviewOrder = () => {
     if (!user) {
       showError('Você precisa estar logado para fazer pedidos')
@@ -262,8 +267,24 @@ export default function CardapioV2() {
       if (newFreeAcais > currentFreeAcais) {
         const gained = newFreeAcais - currentFreeAcais
         success(`Pedido criado! 🎉 Você ganhou ${gained} açaí(s) grátis!`, { duration: 5000 })
+        
+        // Confetti especial quando ganha açaí grátis
+        confetti({
+          particleCount: 150,
+          spread: 100,
+          origin: { y: 0.6 },
+          colors: ['#9333ea', '#fbbf24', '#10b981', '#f59e0b']
+        })
       } else {
         success('Pedido criado com sucesso!', { duration: 3000 })
+        
+        // Confetti normal
+        confetti({
+          particleCount: 100,
+          spread: 70,
+          origin: { y: 0.6 },
+          colors: ['#9333ea', '#a855f7', '#c084fc']
+        })
       }
 
       // Atualizar estado local
@@ -518,7 +539,7 @@ export default function CardapioV2() {
             <button
               onClick={handlePreviewOrder}
               disabled={loading}
-              className="cardapio-v2-order-button"
+              className={`cardapio-v2-order-button ${hasItemsInCart() ? 'pulse-button' : ''}`}
             >
               <ShoppingCart size={20} />
               {loading ? 'Processando...' : 'Fazer Pedido'}
