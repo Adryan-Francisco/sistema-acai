@@ -639,6 +639,78 @@
 }
 
 /* ============================================
+   DELIVERY TYPE SELECTION
+   ============================================ */
+.cardapio-v2-delivery-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  margin-top: 0.5rem;
+}
+
+.cardapio-v2-delivery-button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 1.5rem 1rem;
+  border: 2px solid var(--gray-300);
+  border-radius: var(--radius-lg);
+  background-color: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: inherit;
+}
+
+.cardapio-v2-delivery-button:hover {
+  border-color: var(--purple-400);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px oklch(from var(--purple-600) l c h / 0.1);
+}
+
+.cardapio-v2-delivery-button.selected {
+  border-color: var(--purple-600);
+  background: linear-gradient(135deg, 
+    oklch(from var(--purple-600) l c h / 0.1) 0%, 
+    oklch(from var(--purple-500) l c h / 0.05) 100%
+  );
+  box-shadow: 0 0 0 3px oklch(from var(--purple-600) l c h / 0.1);
+}
+
+.delivery-icon {
+  font-size: 2rem;
+  margin-bottom: 0.25rem;
+}
+
+.delivery-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--gray-900);
+}
+
+.delivery-price {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--purple-600);
+}
+
+.cardapio-v2-delivery-button.selected .delivery-title {
+  color: var(--purple-700);
+}
+
+.cardapio-v2-delivery-button.selected .delivery-price {
+  color: var(--purple-700);
+  font-weight: 700;
+}
+
+@media (max-width: 640px) {
+  .cardapio-v2-delivery-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ============================================
    LOADING STATE
    ============================================ */
 .cardapio-v2-loading {
@@ -1494,4 +1566,24 @@
   background: linear-gradient(135deg, #9333ea 0%, #7c3aed 100%);
   border-color: #9333ea;
 }
+
+[data-theme="dark"] .cardapio-v2-delivery-button {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+[data-theme="dark"] .cardapio-v2-delivery-button .delivery-title {
+  color: #f9fafb;
+}
+
+[data-theme="dark"] .cardapio-v2-delivery-button.selected {
+  background: rgba(147, 51, 234, 0.2);
+  border-color: #9333ea;
+}
+
+[data-theme="dark"] .cardapio-v2-delivery-button.selected .delivery-title,
+[data-theme="dark"] .cardapio-v2-delivery-button.selected .delivery-price {
+  color: #c084fc;
+}
+
 

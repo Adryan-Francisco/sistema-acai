@@ -25,10 +25,13 @@ export default function CardapioV2() {
   const [userName, setUserName] = useState("") // Nome real do usuário
   const [loading, setLoading] = useState(false)
   const [paymentMethod, setPaymentMethod] = useState("")
+  const [deliveryType, setDeliveryType] = useState("retirada") // "retirada" ou "entrega"
   const [showPreview, setShowPreview] = useState(false)
   const [showPixModal, setShowPixModal] = useState(false)
   const [pixCopied, setPixCopied] = useState(false)
   const [pixCode, setPixCode] = useState("")
+
+  const DELIVERY_FEE = 2.00 // Taxa de entrega
 
   const acaiTypes = [
     {
@@ -148,7 +151,7 @@ export default function CardapioV2() {
 
   const calculateTotal = () => {
     if (useFreeAcai && quantity === 1) {
-      return 0
+      return deliveryType === "entrega" ? DELIVERY_FEE : 0
     }
 
     const typeData = acaiTypes.find((t) => t.value === selectedType)
@@ -159,7 +162,10 @@ export default function CardapioV2() {
     }, 0)
 
     const effectiveQuantity = useFreeAcai ? quantity - 1 : quantity
-    return (basePrice + toppingsPrice) * effectiveQuantity
+    const subtotal = (basePrice + toppingsPrice) * effectiveQuantity
+    const deliveryFee = deliveryType === "entrega" ? DELIVERY_FEE : 0
+    
+    return subtotal + deliveryFee
   }
 
   const hasItemsInCart = () => {
@@ -240,6 +246,8 @@ export default function CardapioV2() {
               .map((dt) => dt.name) || [],
             complementos_removidos: removedDefaultToppings,
             quantidade: quantity,
+            tipo_entrega: deliveryType,
+            taxa_entrega: deliveryType === "entrega" ? DELIVERY_FEE : 0,
             total: calculateTotal().toFixed(2),
             metodo_pagamento: paymentMethod,
             usou_acai_gratis: useFreeAcai,
@@ -529,6 +537,31 @@ export default function CardapioV2() {
             </select>
           </div>
 
+          {/* Delivery Type */}
+          <div className="cardapio-v2-section">
+            <label className="cardapio-v2-section-label">Tipo de Entrega *</label>
+            <div className="cardapio-v2-delivery-grid">
+              <button
+                type="button"
+                onClick={() => setDeliveryType("retirada")}
+                className={`cardapio-v2-delivery-button ${deliveryType === "retirada" ? "selected" : ""}`}
+              >
+                <div className="delivery-icon">🏪</div>
+                <div className="delivery-title">Retirada</div>
+                <div className="delivery-price">Grátis</div>
+              </button>
+              <button
+                type="button"
+                onClick={() => setDeliveryType("entrega")}
+                className={`cardapio-v2-delivery-button ${deliveryType === "entrega" ? "selected" : ""}`}
+              >
+                <div className="delivery-icon">🛵</div>
+                <div className="delivery-title">Entrega</div>
+                <div className="delivery-price">+ R$ 2,00</div>
+              </button>
+            </div>
+          </div>
+
           {/* Total and Order Button */}
           <div className="cardapio-v2-footer">
             <div className="cardapio-v2-total-row">
@@ -627,6 +660,13 @@ export default function CardapioV2() {
               <div className="preview-item">
                 <span className="preview-label">Pagamento:</span>
                 <span className="preview-value preview-payment">{paymentMethod}</span>
+              </div>
+              
+              <div className="preview-item">
+                <span className="preview-label">Tipo de Entrega:</span>
+                <span className="preview-value preview-delivery">
+                  {deliveryType === "retirada" ? "🏪 Retirada (Grátis)" : "🛵 Entrega (+ R$ 2,00)"}
+                </span>
               </div>
               
               {useFreeAcai && (
