@@ -27,7 +27,7 @@ export default function ProgramaFidelidade() {
     try {
       // Carregar pontos do usuário
       const { data: usuario, error: userError } = await supabase
-        .from('usuarios')
+        .from('profiles')
         .select('pontos_fidelidade')
         .eq('id', session.user.id)
         .single();

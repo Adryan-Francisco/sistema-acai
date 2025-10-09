@@ -13,6 +13,7 @@ export default function ResgatarAcai() {
   const [pontos, setPontos] = useState(0);
   const [showSuccess, setShowSuccess] = useState(false);
   const [error, setError] = useState('');
+  const [userName, setUserName] = useState('');
 
   useEffect(() => {
     if (!session) {
@@ -25,13 +26,14 @@ export default function ResgatarAcai() {
   const carregarPontos = async () => {
     try {
       const { data, error } = await supabase
-        .from('usuarios')
-        .select('pontos_fidelidade')
+        .from('profiles')
+        .select('pontos_fidelidade, nome')
         .eq('id', session.user.id)
         .single();
 
       if (error) throw error;
       setPontos(data?.pontos_fidelidade || 0);
+      setUserName(data?.nome || session.user.email?.split('@')[0] || 'Cliente');
     } catch (err) {
       console.error('Erro ao carregar pontos:', err);
       setPontos(0);
@@ -50,7 +52,7 @@ export default function ResgatarAcai() {
     try {
       // 1. Atualizar pontos do usuário (10 pontos = 1 açaí grátis)
       const { error: updateError } = await supabase
-        .from('usuarios')
+        .from('profiles')
         .update({ 
           pontos_fidelidade: pontos - 10 
         })
@@ -59,13 +61,11 @@ export default function ResgatarAcai() {
       if (updateError) throw updateError;
 
       // 2. Criar pedido de resgate
-      const nomeCliente = session.user.user_metadata?.full_name || session.user.email?.split('@')[0] || 'Cliente';
-      
       const { error: pedidoError } = await supabase
         .from('pedidos')
         .insert({
           usuario_id: session.user.id,
-          nome_cliente: nomeCliente,
+          nome_cliente: userName || session.user.email?.split('@')[0] || 'Cliente',
           detalhes_pedido: {
             tipo: 'resgate_fidelidade',
             tipo_acai: 'Açaí Grátis - Fidelidade',

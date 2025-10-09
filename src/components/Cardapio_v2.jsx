@@ -22,6 +22,7 @@ export default function CardapioV2() {
   const [useFreeAcai, setUseFreeAcai] = useState(false)
   const [availableFreeAcais, setAvailableFreeAcais] = useState(0)
   const [fidelityPoints, setFidelityPoints] = useState(0)
+  const [userName, setUserName] = useState("") // Nome real do usuário
   const [loading, setLoading] = useState(false)
   const [paymentMethod, setPaymentMethod] = useState("")
   const [showPreview, setShowPreview] = useState(false)
@@ -102,7 +103,7 @@ export default function CardapioV2() {
       try {
         const { data: profile, error: profileError } = await supabase
           .from('profiles')
-          .select('pontos_fidelidade, acais_gratis')
+          .select('pontos_fidelidade, acais_gratis, nome')
           .eq('id', user.id)
           .single()
 
@@ -118,6 +119,7 @@ export default function CardapioV2() {
           console.log('✅ Perfil carregado:', profile)
           setFidelityPoints(profile.pontos_fidelidade || 0)
           setAvailableFreeAcais(profile.acais_gratis || 0)
+          setUserName(profile.nome || user.email?.split('@')[0] || 'Cliente')
         }
       } catch (err) {
         console.error('❌ Erro ao carregar dados:', err)
@@ -225,7 +227,7 @@ export default function CardapioV2() {
       const { error: orderError } = await supabase.from('pedidos').insert([
         {
           user_id: user.id,
-          nome_cliente: user.email?.split('@')[0] || 'Cliente',
+          nome_cliente: userName || user.email?.split('@')[0] || 'Cliente',
           detalhes_pedido: {
             tipo_acai: typeData?.label || "",
             tamanho: selectedSize,
@@ -350,7 +352,7 @@ export default function CardapioV2() {
               title="Meus Pedidos"
             >
               <User size={16} />
-              {user?.email?.split('@')[0]}
+              {userName || user?.email?.split('@')[0] || 'Cliente'}
             </button>
             <button onClick={handleLogout} className="button-outline button-sm">
               <LogOut size={16} />
