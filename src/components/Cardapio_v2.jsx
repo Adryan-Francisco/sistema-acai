@@ -8,6 +8,7 @@ import { useAuth } from '../AuthContext.jsx'
 import { useNotification } from './NotificationToast.jsx'
 import ThemeToggle from './ThemeToggle.jsx'
 import PixPayment from './PixPayment.jsx'
+import { sendOrderConfirmation, isWhatsAppConfigured } from '../utils/whatsappService.js'
 import './Cardapio_v2.css'
 
 export default function CardapioV2() {
@@ -387,6 +388,17 @@ export default function CardapioV2() {
       // Atualizar estado local
       setFidelityPoints(newPoints)
       setAvailableFreeAcais(Math.max(0, newFreeAcais))
+
+      // Enviar WhatsApp de confirmação (se configurado)
+      if (isWhatsAppConfigured() && orderData && orderData[0]) {
+        try {
+          await sendOrderConfirmation(orderData[0])
+          console.log('✅ WhatsApp de confirmação enviado')
+        } catch (whatsappError) {
+          console.error('❌ Erro ao enviar WhatsApp:', whatsappError)
+          // Não bloquear o fluxo se WhatsApp falhar
+        }
+      }
 
       // Limpar formulário
       setSelectedToppings([])

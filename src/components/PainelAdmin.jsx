@@ -5,6 +5,7 @@ import { Clock, Package, DollarSign, ChefHat, CheckCircle, XCircle, RefreshCw, L
 import { supabase, isSupabaseConfigured } from '../supabaseClient';
 import { useAuth } from '../AuthContext';
 import { playNotificationSound } from '../utils/notificationSound';
+import { sendStatusUpdate, sendReviewReminder, isWhatsAppConfigured } from '../utils/whatsappService';
 import ThemeToggle from './ThemeToggle';
 import './PainelAdmin.css';
 
@@ -400,6 +401,29 @@ function PainelAdmin() {
       }
 
       setAdminMessage({ type: 'success', text: `Status atualizado para "${novoStatus}"` });
+      
+      // Enviar WhatsApp de atualização de status (se configurado)
+      if (isWhatsAppConfigured() && upd && upd.length > 0) {
+        try {
+          await sendStatusUpdate(upd[0], novoStatus)
+          console.log('✅ WhatsApp de atualização enviado')
+          
+          // Se foi marcado como "Entregue", enviar lembrete de avaliação após 5 minutos
+          if (novoStatus === 'Entregue') {
+            setTimeout(async () => {
+              try {
+                await sendReviewReminder(upd[0])
+                console.log('✅ WhatsApp de avaliação enviado')
+              } catch (err) {
+                console.error('❌ Erro ao enviar lembrete de avaliação:', err)
+              }
+            }, 5 * 60 * 1000) // 5 minutos
+          }
+        } catch (whatsappError) {
+          console.error('❌ Erro ao enviar WhatsApp:', whatsappError)
+          // Não bloquear o fluxo se WhatsApp falhar
+        }
+      }
       
       // Limpar mensagem após 3 segundos
       setTimeout(() => setAdminMessage(null), 3000);
