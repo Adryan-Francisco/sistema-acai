@@ -6,6 +6,7 @@ import confetti from 'canvas-confetti'
 import { supabase } from '../supabaseClient.js'
 import { useAuth } from '../AuthContext.jsx'
 import { useNotification } from './NotificationToast.jsx'
+import ThemeToggle from './ThemeToggle.jsx'
 import './Cardapio_v2.css'
 
 export default function CardapioV2() {
@@ -334,6 +335,7 @@ export default function CardapioV2() {
             </div>
           </div>
           <div className="cardapio-v2-header-actions">
+            <ThemeToggle />
             <button 
               onClick={() => navigate('/fidelidade')} 
               className="button-outline button-sm btn-fidelidade"

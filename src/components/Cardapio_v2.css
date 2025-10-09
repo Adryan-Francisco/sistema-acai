@@ -1418,3 +1418,80 @@
     font-size: 1.25rem !important;
   }
 }
+
+/* ========== DARK MODE ========== */
+[data-theme="dark"] .cardapio-v2-container {
+  background: linear-gradient(135deg, #0f0f1e 0%, #1a1a2e 50%, #16213e 100%);
+}
+
+[data-theme="dark"] .cardapio-v2-header {
+  background: rgba(26, 26, 46, 0.95);
+  border-bottom-color: rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="dark"] .cardapio-v2-logo h1 {
+  color: #f9fafb;
+  background: linear-gradient(135deg, #a855f7, #c084fc);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+[data-theme="dark"] .cardapio-v2-card {
+  background: rgba(26, 26, 46, 0.95);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+[data-theme="dark"] .cardapio-v2-section-label {
+  color: #d1d5db;
+}
+
+[data-theme="dark"] .cardapio-v2-type-button {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.15);
+  color: #f9fafb;
+}
+
+[data-theme="dark"] .cardapio-v2-type-button.selected {
+  background: linear-gradient(135deg, #9333ea 0%, #7c3aed 100%);
+  border-color: #9333ea;
+}
+
+[data-theme="dark"] .cardapio-v2-topping-card {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+[data-theme="dark"] .cardapio-v2-topping-card.selected {
+  background: rgba(147, 51, 234, 0.2);
+  border-color: #9333ea;
+}
+
+[data-theme="dark"] .modal-content {
+  background: rgba(26, 26, 46, 0.98);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+[data-theme="dark"] .modal-header h3,
+[data-theme="dark"] .preview-label {
+  color: #f9fafb;
+}
+
+[data-theme="dark"] .preview-value {
+  color: #d1d5db;
+}
+
+[data-theme="dark"] .cardapio-v2-payment-select,
+[data-theme="dark"] .cardapio-v2-size-button,
+[data-theme="dark"] .cardapio-v2-quantity-input,
+[data-theme="dark"] .pix-code-input {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.15);
+  color: #f9fafb;
+}
+
+[data-theme="dark"] .cardapio-v2-size-button.selected {
+  background: linear-gradient(135deg, #9333ea 0%, #7c3aed 100%);
+  border-color: #9333ea;
+}
+

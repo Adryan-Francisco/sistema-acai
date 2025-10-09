@@ -763,3 +763,83 @@ button.loading::after {
     padding: 12px 16px;
   }
 }
+
+/* ========== DARK MODE ========== */
+[data-theme="dark"] {
+  --bg-primary: #0f0f1e;
+  --bg-secondary: #1a1a2e;
+  --bg-card: rgba(26, 26, 46, 0.95);
+  --bg-glass: rgba(255, 255, 255, 0.05);
+  --bg-overlay: rgba(0, 0, 0, 0.9);
+  
+  --text-primary: #f9fafb;
+  --text-secondary: #d1d5db;
+  --text-muted: #9ca3af;
+  --text-light: #f9fafb;
+  --text-dark: #f9fafb;
+  --text-accent: #a855f7;
+  
+  --border-light: rgba(255, 255, 255, 0.1);
+  --border-medium: rgba(255, 255, 255, 0.2);
+  --border-accent: rgba(168, 85, 247, 0.5);
+  --border-solid: rgba(255, 255, 255, 0.15);
+  
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.5);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.6);
+  --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.7);
+  --shadow-xl: 0 25px 50px rgba(0, 0, 0, 0.8);
+}
+
+[data-theme="dark"] body {
+  background: linear-gradient(135deg, #0f0f1e 0%, #1a1a2e 50%, #16213e 100%);
+  color: var(--text-primary);
+}
+
+[data-theme="dark"] input[type="text"],
+[data-theme="dark"] input[type="email"],
+[data-theme="dark"] input[type="password"],
+[data-theme="dark"] input[type="number"],
+[data-theme="dark"] textarea,
+[data-theme="dark"] select {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: var(--border-solid);
+  color: var(--text-primary);
+}
+
+[data-theme="dark"] input::placeholder {
+  color: var(--text-muted);
+}
+
+[data-theme="dark"] input:focus,
+[data-theme="dark"] textarea:focus,
+[data-theme="dark"] select:focus {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: var(--primary-color);
+}
+
+[data-theme="dark"] .card {
+  background: var(--bg-card);
+  border-color: var(--border-solid);
+}
+
+[data-theme="dark"] nav {
+  background: rgba(26, 26, 46, 0.95);
+  border-bottom-color: var(--border-solid);
+}
+
+[data-theme="dark"] .skeleton {
+  background: linear-gradient(90deg, #1a1a2e 25%, #2a2a3e 50%, #1a1a2e 75%);
+  background-size: 1000px 100%;
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-track {
+  background: rgba(15, 15, 30, 0.5);
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #7c3aed, #9333ea);
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, #9333ea, #a855f7);
+}

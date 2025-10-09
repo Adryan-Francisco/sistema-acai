@@ -2,6 +2,7 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from './AuthContext';
+import { ThemeProvider } from './ThemeContext';
 import NotificationProvider from './components/NotificationToast';
 
 // Importação de todos os componentes de página
@@ -256,6 +257,7 @@ function App() {
   const envMissing = !import.meta.env.VITE_SUPABASE_URL || !import.meta.env.VITE_SUPABASE_ANON_KEY;
 
   return (
+    <ThemeProvider>
     <NotificationProvider>
       <BrowserRouter basename="/sistema-acai">
       {envMissing && (
@@ -304,6 +306,7 @@ function App() {
       </div>
       </BrowserRouter>
     </NotificationProvider>
+    </ThemeProvider>
   );
 }
 

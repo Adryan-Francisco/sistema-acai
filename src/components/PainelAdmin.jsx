@@ -5,6 +5,7 @@ import { Clock, Package, DollarSign, ChefHat, CheckCircle, XCircle, RefreshCw, L
 import { supabase, isSupabaseConfigured } from '../supabaseClient';
 import { useAuth } from '../AuthContext';
 import { playNotificationSound } from '../utils/notificationSound';
+import ThemeToggle from './ThemeToggle';
 import './PainelAdmin.css';
 
 function PainelAdmin() {
@@ -627,6 +628,7 @@ function PainelAdmin() {
               <RefreshCw size={18} className={refreshing ? 'spinning' : ''} />
               <span className="btn-text">Atualizar</span>
             </button>
+            <ThemeToggle />
             <button 
               onClick={handleLogout} 
               className="btn-header btn-logout"

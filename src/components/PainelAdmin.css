@@ -1227,3 +1227,100 @@
   transform: translateY(-2px);
   box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4);
 }
+
+/* ========== DARK MODE ========== */
+[data-theme="dark"] .painel-loading,
+[data-theme="dark"] .painel-admin-wrapper {
+  background: linear-gradient(135deg, #0f0f1e 0%, #1a1a2e 50%, #16213e 100%);
+}
+
+[data-theme="dark"] .painel-admin-header {
+  background: rgba(26, 26, 46, 0.95);
+  border-bottom-color: rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="dark"] .header-title h1 {
+  color: #f9fafb;
+}
+
+[data-theme="dark"] .header-subtitle span {
+  color: #d1d5db;
+}
+
+[data-theme="dark"] .painel-admin-container {
+  color: #f9fafb;
+}
+
+[data-theme="dark"] .stat-card {
+  background: rgba(26, 26, 46, 0.95);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+[data-theme="dark"] .stat-card h2,
+[data-theme="dark"] .stat-card p {
+  color: #f9fafb;
+}
+
+[data-theme="dark"] .pedido-card {
+  background: rgba(26, 26, 46, 0.95);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+[data-theme="dark"] .cliente-nome,
+[data-theme="dark"] .pedido-info {
+  color: #f9fafb;
+}
+
+[data-theme="dark"] .filtro-btn {
+  background: rgba(255, 255, 255, 0.05);
+  color: #d1d5db;
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+[data-theme="dark"] .filtro-btn.active {
+  background: linear-gradient(135deg, #9333ea 0%, #7c3aed 100%);
+  color: white;
+  border-color: #9333ea;
+}
+
+[data-theme="dark"] .busca-input,
+[data-theme="dark"] .filtro-input {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.15);
+  color: #f9fafb;
+}
+
+[data-theme="dark"] .filtros-avancados-painel {
+  background: rgba(26, 26, 46, 0.95);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+[data-theme="dark"] .filtro-group label {
+  color: #d1d5db;
+}
+
+[data-theme="dark"] .modal-confirmacao {
+  background: rgba(26, 26, 46, 0.98);
+}
+
+[data-theme="dark"] .modal-header {
+  border-bottom-color: rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="dark"] .modal-header h3 {
+  color: #f9fafb;
+}
+
+[data-theme="dark"] .modal-body p {
+  color: #d1d5db;
+}
+
+[data-theme="dark"] .skeleton-title,
+[data-theme="dark"] .skeleton-subtitle,
+[data-theme="dark"] .skeleton-stat-card,
+[data-theme="dark"] .skeleton-filters,
+[data-theme="dark"] .skeleton-line {
+  background: linear-gradient(90deg, #1a1a2e 0%, #2a2a3e 50%, #1a1a2e 100%);
+  background-size: 200% 100%;
+}
+
