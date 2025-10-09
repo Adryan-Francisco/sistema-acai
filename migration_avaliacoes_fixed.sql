@@ -5,8 +5,8 @@
 
 -- 1. Criar tabela de avaliações
 CREATE TABLE IF NOT EXISTS public.avaliacoes (
-  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-  pedido_id UUID REFERENCES public.pedidos(id) ON DELETE CASCADE NOT NULL,
+  id BIGSERIAL PRIMARY KEY,
+  pedido_id BIGINT REFERENCES public.pedidos(id) ON DELETE CASCADE NOT NULL,
   usuario_id UUID REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL,
   nota INTEGER NOT NULL CHECK (nota >= 1 AND nota <= 5),
   comentario TEXT,
