@@ -1586,4 +1586,150 @@
   color: #c084fc;
 }
 
+/* ========================================
+   LOJA FECHADA - OVERLAY
+   ======================================== */
+
+.loja-fechada-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.95);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  backdrop-filter: blur(10px);
+  animation: fadeIn 0.3s ease;
+}
+
+.loja-fechada-modal {
+  background: white;
+  padding: 48px;
+  border-radius: 24px;
+  text-align: center;
+  max-width: 500px;
+  width: 90%;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  animation: slideUp 0.3s ease;
+}
+
+.loja-fechada-icon {
+  font-size: 80px;
+  margin-bottom: 24px;
+  animation: bounce 1s ease infinite;
+}
+
+.loja-fechada-modal h2 {
+  font-size: 28px;
+  color: #1a1a2e;
+  margin: 0 0 16px 0;
+  font-weight: 700;
+}
+
+.loja-fechada-modal p {
+  font-size: 18px;
+  color: #6b7280;
+  margin: 0 0 32px 0;
+  line-height: 1.6;
+}
+
+.loja-fechada-modal .button-primary {
+  width: 100%;
+  padding: 16px;
+  font-size: 18px;
+}
+
+/* Loading de verificação */
+.loja-checking-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--bg-primary);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  z-index: 9999;
+}
+
+.loja-checking-overlay .loading-spinner {
+  width: 60px;
+  height: 60px;
+  border: 6px solid var(--gray-200);
+  border-top-color: var(--primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.loja-checking-overlay p {
+  font-size: 18px;
+  color: var(--text-secondary);
+}
+
+/* Botão desabilitado quando fechado */
+.button-disabled {
+  background: #9ca3af !important;
+  cursor: not-allowed !important;
+  opacity: 0.6;
+}
+
+.button-disabled:hover {
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+/* Dark mode */
+[data-theme="dark"] .loja-fechada-modal {
+  background: rgba(26, 26, 46, 0.98);
+}
+
+[data-theme="dark"] .loja-fechada-modal h2 {
+  color: #f9fafb;
+}
+
+[data-theme="dark"] .loja-fechada-modal p {
+  color: #d1d5db;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(50px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
 

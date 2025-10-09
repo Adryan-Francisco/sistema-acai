@@ -32,6 +32,11 @@ export default function CardapioV2() {
   const [showPixModal, setShowPixModal] = useState(false)
   const [pixCopied, setPixCopied] = useState(false)
   const [pixCode, setPixCode] = useState("")
+  
+  // Estado da loja
+  const [lojaAberta, setLojaAberta] = useState(true)
+  const [mensagemFechado, setMensagemFechado] = useState("")
+  const [checkingStatus, setCheckingStatus] = useState(true)
 
   const DELIVERY_FEE = 2.00 // Taxa de entrega
   const PREPARATION_TIME = "15-25 minutos" // Tempo estimado de preparo
@@ -95,6 +100,77 @@ export default function CardapioV2() {
       setSelectedDefaultToppings([])
     }
   }, [selectedType])
+
+  // Verificar se a loja está aberta
+  useEffect(() => {
+    const verificarStatusLoja = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('configuracoes')
+          .select('vendas_pausadas, mensagem_fechado, horarios')
+          .single()
+
+        if (error) {
+          console.error('Erro ao verificar status da loja:', error)
+          // Se der erro, assume que está aberta (fallback)
+          setLojaAberta(true)
+          setCheckingStatus(false)
+          return
+        }
+
+        if (data) {
+          const { vendas_pausadas, mensagem_fechado, horarios } = data
+
+          // Se vendas pausadas, fecha
+          if (vendas_pausadas) {
+            setLojaAberta(false)
+            setMensagemFechado(mensagem_fechado || 'Desculpe, estamos fechados no momento.')
+            setCheckingStatus(false)
+            return
+          }
+
+          // Verificar horário
+          const agora = new Date()
+          const diaSemana = ['domingo', 'segunda', 'terca', 'quarta', 'quinta', 'sexta', 'sabado'][agora.getDay()]
+          const horaAtual = agora.toTimeString().slice(0, 5) // HH:MM
+
+          if (horarios && horarios[diaSemana]) {
+            const horarioDia = horarios[diaSemana]
+            
+            if (!horarioDia.aberto) {
+              setLojaAberta(false)
+              setMensagemFechado(`Desculpe, estamos fechados às ${diaSemana}s.`)
+              setCheckingStatus(false)
+              return
+            }
+
+            // Verificar se está dentro do horário
+            const dentroHorario = horaAtual >= horarioDia.inicio && horaAtual <= horarioDia.fim
+            
+            if (!dentroHorario) {
+              setLojaAberta(false)
+              setMensagemFechado(`Horário de funcionamento: ${horarioDia.inicio} às ${horarioDia.fim}`)
+              setCheckingStatus(false)
+              return
+            }
+          }
+
+          setLojaAberta(true)
+          setCheckingStatus(false)
+        }
+      } catch (error) {
+        console.error('Erro ao verificar status:', error)
+        setLojaAberta(true) // Fallback
+        setCheckingStatus(false)
+      }
+    }
+
+    verificarStatusLoja()
+    
+    // Verificar a cada 1 minuto
+    const interval = setInterval(verificarStatusLoja, 60000)
+    return () => clearInterval(interval)
+  }, [])
 
   // Carregar dados do usuário
   useEffect(() => {
@@ -363,6 +439,31 @@ export default function CardapioV2() {
 
   return (
     <div className="cardapio-v2-container">
+      {/* Aviso de Loja Fechada */}
+      {!lojaAberta && (
+        <div className="loja-fechada-overlay">
+          <div className="loja-fechada-modal">
+            <div className="loja-fechada-icon">🔒</div>
+            <h2>Desculpe, estamos fechados</h2>
+            <p>{mensagemFechado}</p>
+            <button 
+              onClick={() => window.location.reload()} 
+              className="button-primary"
+            >
+              Recarregar Página
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Loading inicial */}
+      {checkingStatus && (
+        <div className="loja-checking-overlay">
+          <div className="loading-spinner"></div>
+          <p>Verificando disponibilidade...</p>
+        </div>
+      )}
+
       {/* Header */}
       <header className="cardapio-v2-header">
         <div className="cardapio-v2-header-content">
@@ -642,11 +743,12 @@ export default function CardapioV2() {
             </div>
             <button
               onClick={handlePreviewOrder}
-              disabled={loading}
-              className={`cardapio-v2-order-button ${hasItemsInCart() ? 'pulse-button' : ''}`}
+              disabled={loading || !lojaAberta}
+              className={`cardapio-v2-order-button ${hasItemsInCart() ? 'pulse-button' : ''} ${!lojaAberta ? 'button-disabled' : ''}`}
+              title={!lojaAberta ? 'Loja fechada no momento' : ''}
             >
               <ShoppingCart size={20} />
-              {loading ? 'Processando...' : 'Fazer Pedido'}
+              {!lojaAberta ? '🔒 Loja Fechada' : loading ? 'Processando...' : 'Fazer Pedido'}
             </button>
           </div>
         </div>

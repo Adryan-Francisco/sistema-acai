@@ -8,17 +8,75 @@
   background: var(--bg-primary);
 }
 
+/* ========================================
+   HEADER MELHORADO
+   ======================================== */
+
 .horario-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 24px;
+  margin-bottom: 32px;
   flex-wrap: wrap;
+  gap: 20px;
+  background: var(--bg-card);
+  padding: 24px;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  flex: 1;
+}
+
+.btn-voltar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  background: white;
+  color: #667eea;
+  border: 2px solid #667eea;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-voltar:hover {
+  background: #667eea;
+  color: white;
+  transform: translateX(-4px);
+}
+
+.btn-voltar:active {
+  transform: translateX(-2px);
+}
+
+.header-title {
+  display: flex;
+  align-items: center;
   gap: 16px;
 }
 
+.title-icon {
+  width: 64px;
+  height: 64px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
 .horario-header h2 {
-  font-size: 32px;
+  font-size: 28px;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -29,13 +87,14 @@
 .horario-header p {
   color: var(--text-secondary);
   margin: 0;
+  font-size: 14px;
 }
 
 .btn-salvar {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 12px 24px;
+  padding: 14px 28px;
   background: linear-gradient(135deg, #10b981 0%, #059669 100%);
   color: white;
   border: none;
@@ -250,111 +309,164 @@
 /* Grid de Horários */
 .horarios-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+  gap: 24px;
 }
 
 .horario-card {
   background: var(--bg-card);
-  border-radius: 16px;
-  padding: 20px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 20px;
+  padding: 24px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
   transition: all 0.3s ease;
   border: 2px solid transparent;
+  position: relative;
+  overflow: hidden;
+}
+
+.horario-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
 }
 
 .horario-card:hover {
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
-  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(102, 126, 234, 0.2);
+  transform: translateY(-4px);
+  border-color: #667eea;
+}
+
+.horario-card:hover::before {
+  opacity: 1;
 }
 
 .horario-card.fechado {
-  opacity: 0.7;
+  opacity: 0.8;
   border-color: #ef4444;
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.05) 0%, var(--bg-card) 100%);
+}
+
+.horario-card.fechado::before {
+  background: #ef4444;
+  opacity: 1;
 }
 
 .horario-card-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 16px;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--gray-200);
 }
 
 .dia-info {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
 }
 
 .dia-info svg {
   color: #667eea;
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+  padding: 8px;
+  border-radius: 10px;
 }
 
 .dia-info h4 {
   margin: 0;
   color: var(--text-primary);
   font-size: 18px;
+  font-weight: 700;
 }
 
 .horario-inputs {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  margin-bottom: 12px;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.input-group {
+  position: relative;
 }
 
 .input-group label {
   display: block;
-  margin-bottom: 6px;
+  margin-bottom: 8px;
   color: var(--text-secondary);
   font-size: 13px;
-  font-weight: 500;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .input-group input[type="time"] {
   width: 100%;
-  padding: 10px;
+  padding: 12px 14px;
   border: 2px solid var(--gray-300);
-  border-radius: 8px;
-  background: var(--bg-primary);
-  color: var(--text-primary);
+  border-radius: 10px;
+  background: white;
+  color: #1f2937;
   font-size: 16px;
   font-family: inherit;
+  font-weight: 600;
+  transition: all 0.3s ease;
 }
 
 .input-group input[type="time"]:focus {
   outline: none;
   border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
 }
 
 .dia-fechado {
   text-align: center;
-  padding: 20px;
+  padding: 32px 20px;
   color: var(--text-secondary);
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.05) 0%, transparent 100%);
+  border-radius: 12px;
 }
 
 .dia-fechado p {
   margin: 0;
-  font-size: 16px;
-  font-weight: 500;
+  font-size: 18px;
+  font-weight: 600;
+  color: #ef4444;
 }
 
 .btn-aplicar-todos {
   width: 100%;
-  padding: 10px;
-  background: rgba(102, 126, 234, 0.1);
+  padding: 12px;
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
   color: #667eea;
-  border: 1px solid #667eea;
-  border-radius: 8px;
+  border: 2px solid #667eea;
+  border-radius: 10px;
   font-size: 14px;
-  font-weight: 500;
+  font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
 }
 
 .btn-aplicar-todos:hover {
   background: #667eea;
   color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.btn-aplicar-todos:active {
+  transform: translateY(0);
 }
 
 /* Loading */
@@ -390,9 +502,9 @@
 }
 
 [data-theme="dark"] .input-group input[type="time"] {
-  background: rgba(255, 255, 255, 0.05);
-  border-color: rgba(255, 255, 255, 0.15);
-  color: #f9fafb;
+  background: white;
+  border-color: rgba(255, 255, 255, 0.3);
+  color: #1f2937;
 }
 
 /* Responsive */

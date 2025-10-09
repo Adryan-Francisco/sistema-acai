@@ -1,10 +1,12 @@
 // src/components/HorarioFuncionamento.jsx
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { supabase } from '../supabaseClient';
-import { Clock, Save, AlertCircle, CheckCircle, Power } from 'lucide-react';
+import { Clock, Save, AlertCircle, CheckCircle, Power, ArrowLeft, Copy } from 'lucide-react';
 import './HorarioFuncionamento.css';
 
 export default function HorarioFuncionamento() {
+  const navigate = useNavigate();
   const [horarios, setHorarios] = useState({
     segunda: { aberto: true, inicio: '09:00', fim: '22:00' },
     terca: { aberto: true, inicio: '09:00', fim: '22:00' },
@@ -139,10 +141,26 @@ export default function HorarioFuncionamento() {
 
   return (
     <div className="horario-funcionamento">
+      {/* Header com Botão Voltar */}
       <div className="horario-header">
-        <div>
-          <h2>⏰ Horário de Funcionamento</h2>
-          <p>Configure os horários de abertura e controle as vendas</p>
+        <div className="header-left">
+          <button 
+            onClick={() => navigate('/admin')} 
+            className="btn-voltar"
+            title="Voltar ao Painel Admin"
+          >
+            <ArrowLeft size={20} />
+            Voltar
+          </button>
+          <div className="header-title">
+            <div className="title-icon">
+              <Clock size={32} />
+            </div>
+            <div>
+              <h2>⏰ Horário de Funcionamento</h2>
+              <p>Configure os horários e controle de vendas</p>
+            </div>
+          </div>
         </div>
         <button onClick={handleSalvar} className="btn-salvar" disabled={saving}>
           <Save size={20} />
@@ -237,7 +255,8 @@ export default function HorarioFuncionamento() {
                   className="btn-aplicar-todos"
                   title="Aplicar este horário para todos os dias"
                 >
-                  Aplicar para todos
+                  <Copy size={16} />
+                  Aplicar para todos os dias
                 </button>
               </>
             ) : (
