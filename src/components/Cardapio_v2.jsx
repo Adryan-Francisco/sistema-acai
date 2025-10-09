@@ -26,12 +26,15 @@ export default function CardapioV2() {
   const [loading, setLoading] = useState(false)
   const [paymentMethod, setPaymentMethod] = useState("")
   const [deliveryType, setDeliveryType] = useState("retirada") // "retirada" ou "entrega"
+  const [phoneNumber, setPhoneNumber] = useState("") // Telefone
+  const [deliveryAddress, setDeliveryAddress] = useState("") // Endereço de entrega
   const [showPreview, setShowPreview] = useState(false)
   const [showPixModal, setShowPixModal] = useState(false)
   const [pixCopied, setPixCopied] = useState(false)
   const [pixCode, setPixCode] = useState("")
 
   const DELIVERY_FEE = 2.00 // Taxa de entrega
+  const PREPARATION_TIME = "15-25 minutos" // Tempo estimado de preparo
 
   const acaiTypes = [
     {
@@ -172,6 +175,20 @@ export default function CardapioV2() {
     return selectedToppings.length > 0 || quantity > 1 || useFreeAcai || paymentMethod
   }
 
+  // Máscara de telefone
+  const formatPhoneNumber = (value) => {
+    const numbers = value.replace(/\D/g, '')
+    if (numbers.length <= 10) {
+      return numbers.replace(/(\d{2})(\d{4})(\d{0,4})/, '($1) $2-$3')
+    }
+    return numbers.replace(/(\d{2})(\d{5})(\d{0,4})/, '($1) $2-$3')
+  }
+
+  const handlePhoneChange = (e) => {
+    const formatted = formatPhoneNumber(e.target.value)
+    setPhoneNumber(formatted)
+  }
+
   const handlePreviewOrder = () => {
     if (!user) {
       showError('Você precisa estar logado para fazer pedidos')
@@ -181,6 +198,16 @@ export default function CardapioV2() {
 
     if (!paymentMethod) {
       showError('Selecione um método de pagamento')
+      return
+    }
+
+    if (!phoneNumber || phoneNumber.replace(/\D/g, '').length < 10) {
+      showError('Informe um telefone válido para contato')
+      return
+    }
+
+    if (deliveryType === "entrega" && !deliveryAddress.trim()) {
+      showError('Informe o endereço de entrega')
       return
     }
 
@@ -234,6 +261,7 @@ export default function CardapioV2() {
         {
           user_id: user.id,
           nome_cliente: userName || user.email?.split('@')[0] || 'Cliente',
+          telefone: phoneNumber,
           detalhes_pedido: {
             tipo_acai: typeData?.label || "",
             tamanho: selectedSize,
@@ -247,7 +275,9 @@ export default function CardapioV2() {
             complementos_removidos: removedDefaultToppings,
             quantidade: quantity,
             tipo_entrega: deliveryType,
+            endereco_entrega: deliveryType === "entrega" ? deliveryAddress : null,
             taxa_entrega: deliveryType === "entrega" ? DELIVERY_FEE : 0,
+            tempo_preparo: PREPARATION_TIME,
             total: calculateTotal().toFixed(2),
             metodo_pagamento: paymentMethod,
             usou_acai_gratis: useFreeAcai,
@@ -559,6 +589,43 @@ export default function CardapioV2() {
                 <div className="delivery-title">Entrega</div>
                 <div className="delivery-price">+ R$ 2,00</div>
               </button>
+            </div>
+          </div>
+
+          {/* Phone Number */}
+          <div className="cardapio-v2-section">
+            <label className="cardapio-v2-section-label">Telefone para Contato *</label>
+            <input
+              type="tel"
+              value={phoneNumber}
+              onChange={handlePhoneChange}
+              placeholder="(00) 00000-0000"
+              maxLength={15}
+              className="cardapio-v2-phone-input"
+            />
+          </div>
+
+          {/* Delivery Address - Only show if delivery is selected */}
+          {deliveryType === "entrega" && (
+            <div className="cardapio-v2-section">
+              <label className="cardapio-v2-section-label">Endereço de Entrega *</label>
+              <textarea
+                value={deliveryAddress}
+                onChange={(e) => setDeliveryAddress(e.target.value)}
+                placeholder="Rua, número, complemento, bairro..."
+                rows={3}
+                className="cardapio-v2-address-input"
+              />
+              <p className="cardapio-v2-address-hint">📍 Informe o endereço completo para entregarmos seu pedido</p>
+            </div>
+          )}
+
+          {/* Preparation Time Info */}
+          <div className="cardapio-v2-prep-time-info">
+            <div className="prep-time-icon">⏱️</div>
+            <div className="prep-time-content">
+              <strong>Tempo estimado de preparo:</strong>
+              <span className="prep-time-value">{PREPARATION_TIME}</span>
             </div>
           </div>
 

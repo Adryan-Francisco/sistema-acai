@@ -13,6 +13,8 @@ import EmailConfirmado from './components/EmailConfirmado'; // Página de confir
 import PainelAdmin from './components/PainelAdmin';
 import CatalogoAdmin from './components/CatalogoAdmin';
 import DashboardAdmin from './components/DashboardAdmin';
+import AvaliacoesAdmin from './components/AvaliacoesAdmin';
+import HorarioFuncionamento from './components/HorarioFuncionamento';
 import MeusPedidos from './components/MeusPedidos';
 import ResgatarAcai from './components/ResgatarAcai';
 import ProgramaFidelidade from './components/ProgramaFidelidade';
@@ -287,6 +289,14 @@ function App() {
           <Route
             path="/admin/dashboard"
             element={ <ProtectedRoute> <DashboardAdmin /> </ProtectedRoute> }
+          />
+          <Route
+            path="/admin/avaliacoes"
+            element={ <ProtectedRoute> <AvaliacoesAdmin /> </ProtectedRoute> }
+          />
+          <Route
+            path="/admin/horarios"
+            element={ <ProtectedRoute> <HorarioFuncionamento /> </ProtectedRoute> }
           />
           
           {/* Rota Protegida para Clientes Logados */}

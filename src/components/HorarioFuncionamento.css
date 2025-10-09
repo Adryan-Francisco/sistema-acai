@@ -1,0 +1,427 @@
+/* src/components/HorarioFuncionamento.css */
+
+.horario-funcionamento {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 24px;
+  min-height: 100vh;
+  background: var(--bg-primary);
+}
+
+.horario-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.horario-header h2 {
+  font-size: 32px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin: 0 0 4px 0;
+}
+
+.horario-header p {
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.btn-salvar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.btn-salvar:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+}
+
+.btn-salvar:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Mensagens */
+.horario-message {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  border-radius: 12px;
+  margin-bottom: 24px;
+  font-weight: 500;
+}
+
+.horario-message.success {
+  background: rgba(16, 185, 129, 0.1);
+  color: #10b981;
+  border: 2px solid #10b981;
+}
+
+.horario-message.error {
+  background: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+  border: 2px solid #ef4444;
+}
+
+.horario-message.info {
+  background: rgba(59, 130, 246, 0.1);
+  color: #3b82f6;
+  border: 2px solid #3b82f6;
+}
+
+/* Controle de Vendas */
+.vendas-controle {
+  background: var(--bg-card);
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 32px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.controle-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.controle-info {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  flex: 1;
+}
+
+.controle-info > svg {
+  color: #667eea;
+  flex-shrink: 0;
+  margin-top: 4px;
+}
+
+.controle-info h3 {
+  margin: 0 0 4px 0;
+  color: var(--text-primary);
+  font-size: 20px;
+}
+
+.controle-info p {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+/* Toggle Switch */
+.toggle-switch {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+}
+
+.toggle-switch input {
+  display: none;
+}
+
+.toggle-slider {
+  position: relative;
+  width: 60px;
+  height: 32px;
+  background: #ef4444;
+  border-radius: 16px;
+  transition: background 0.3s ease;
+}
+
+.toggle-switch input:checked + .toggle-slider {
+  background: #10b981;
+}
+
+.toggle-slider::before {
+  content: '';
+  position: absolute;
+  width: 26px;
+  height: 26px;
+  background: white;
+  border-radius: 50%;
+  top: 3px;
+  left: 3px;
+  transition: transform 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.toggle-switch input:checked + .toggle-slider::before {
+  transform: translateX(28px);
+}
+
+.toggle-label {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+/* Toggle Switch Pequeno */
+.toggle-switch-small {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.toggle-switch-small input {
+  display: none;
+}
+
+.toggle-slider-small {
+  position: relative;
+  width: 48px;
+  height: 26px;
+  background: #ef4444;
+  border-radius: 13px;
+  transition: background 0.3s ease;
+}
+
+.toggle-switch-small input:checked + .toggle-slider-small {
+  background: #10b981;
+}
+
+.toggle-slider-small::before {
+  content: '';
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  background: white;
+  border-radius: 50%;
+  top: 3px;
+  left: 3px;
+  transition: transform 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.toggle-switch-small input:checked + .toggle-slider-small::before {
+  transform: translateX(22px);
+}
+
+/* Mensagem Fechado */
+.mensagem-fechado {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid var(--gray-200);
+}
+
+.mensagem-fechado label {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.mensagem-fechado textarea {
+  width: 100%;
+  padding: 12px;
+  border: 2px solid var(--gray-300);
+  border-radius: 8px;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-size: 14px;
+  resize: vertical;
+  font-family: inherit;
+}
+
+.mensagem-fechado textarea:focus {
+  outline: none;
+  border-color: #667eea;
+}
+
+/* Grid de Horários */
+.horarios-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 20px;
+}
+
+.horario-card {
+  background: var(--bg-card);
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+}
+
+.horario-card:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
+}
+
+.horario-card.fechado {
+  opacity: 0.7;
+  border-color: #ef4444;
+}
+
+.horario-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.dia-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.dia-info svg {
+  color: #667eea;
+}
+
+.dia-info h4 {
+  margin: 0;
+  color: var(--text-primary);
+  font-size: 18px;
+}
+
+.horario-inputs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.input-group label {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.input-group input[type="time"] {
+  width: 100%;
+  padding: 10px;
+  border: 2px solid var(--gray-300);
+  border-radius: 8px;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-size: 16px;
+  font-family: inherit;
+}
+
+.input-group input[type="time"]:focus {
+  outline: none;
+  border-color: #667eea;
+}
+
+.dia-fechado {
+  text-align: center;
+  padding: 20px;
+  color: var(--text-secondary);
+}
+
+.dia-fechado p {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.btn-aplicar-todos {
+  width: 100%;
+  padding: 10px;
+  background: rgba(102, 126, 234, 0.1);
+  color: #667eea;
+  border: 1px solid #667eea;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-aplicar-todos:hover {
+  background: #667eea;
+  color: white;
+}
+
+/* Loading */
+.horario-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  gap: 20px;
+}
+
+.loading-spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid var(--gray-200);
+  border-top-color: #667eea;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Dark Mode */
+[data-theme="dark"] .mensagem-fechado textarea {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.15);
+  color: #f9fafb;
+}
+
+[data-theme="dark"] .input-group input[type="time"] {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.15);
+  color: #f9fafb;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .horario-funcionamento {
+    padding: 16px;
+  }
+
+  .horario-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .btn-salvar {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .controle-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .toggle-switch {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .horarios-grid {
+    grid-template-columns: 1fr;
+  }
+}

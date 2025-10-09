@@ -1,7 +1,7 @@
 // src/components/PainelAdmin.jsx
 import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Clock, Package, DollarSign, ChefHat, CheckCircle, XCircle, RefreshCw, LogOut, Printer, Bell, Search, Filter, X } from 'lucide-react';
+import { Clock, Package, DollarSign, ChefHat, CheckCircle, XCircle, RefreshCw, LogOut, Printer, Bell, Search, Filter, X, Star, Settings } from 'lucide-react';
 import { supabase, isSupabaseConfigured } from '../supabaseClient';
 import { useAuth } from '../AuthContext';
 import { playNotificationSound } from '../utils/notificationSound';
@@ -615,6 +615,22 @@ function PainelAdmin() {
             >
               <ChefHat size={18} />
               <span className="btn-text">Dashboard</span>
+            </button>
+            <button 
+              onClick={() => navigate('/admin/avaliacoes')}
+              className="btn-header btn-avaliacoes"
+              title="Ver Avaliações dos Clientes"
+            >
+              <Star size={18} />
+              <span className="btn-text">Avaliações</span>
+            </button>
+            <button 
+              onClick={() => navigate('/admin/horarios')}
+              className="btn-header btn-horarios"
+              title="Configurar Horário de Funcionamento"
+            >
+              <Settings size={18} />
+              <span className="btn-text">Horários</span>
             </button>
             <button 
               onClick={() => {

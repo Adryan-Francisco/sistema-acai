@@ -1,11 +1,13 @@
 // src/components/DashboardAdmin.jsx
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { supabase } from '../supabaseClient';
 import { BarChart, Bar, LineChart, Line, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { TrendingUp, DollarSign, ShoppingBag, Users, Star, Gift, Clock, Award } from 'lucide-react';
+import { TrendingUp, DollarSign, ShoppingBag, Users, Star, Gift, Clock, Award, ArrowLeft } from 'lucide-react';
 import './DashboardAdmin.css';
 
 export default function DashboardAdmin() {
+  const navigate = useNavigate();
   const [stats, setStats] = useState({
     totalVendas: 0,
     pedidosHoje: 0,
@@ -215,6 +217,14 @@ export default function DashboardAdmin() {
   return (
     <div className="dashboard-container">
       <div className="dashboard-header">
+        <button 
+          onClick={() => navigate('/admin')} 
+          className="btn-back"
+          title="Voltar ao Painel Admin"
+        >
+          <ArrowLeft size={20} />
+          Voltar
+        </button>
         <h1>📊 Dashboard de Estatísticas</h1>
         <button onClick={carregarEstatisticas} className="btn-refresh">
           🔄 Atualizar
