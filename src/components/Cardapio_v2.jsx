@@ -259,7 +259,7 @@ export default function CardapioV2() {
       // Criar pedido
       const { error: orderError } = await supabase.from('pedidos').insert([
         {
-          user_id: user.id,
+          usuario_id: user.id,
           nome_cliente: userName || user.email?.split('@')[0] || 'Cliente',
           telefone: phoneNumber,
           detalhes_pedido: {
