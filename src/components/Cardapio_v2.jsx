@@ -308,7 +308,7 @@ export default function CardapioV2() {
       // Criar pedido
       const { data: orderData, error: orderError } = await supabase.from('pedidos').insert([
         {
-          usuario_id: user.id,
+          user_id: user.id,
           nome_cliente: userName || user.email?.split('@')[0] || 'Cliente',
           telefone: phoneNumber,
           detalhes_pedido: {
@@ -392,12 +392,18 @@ export default function CardapioV2() {
       // Enviar WhatsApp de confirmação (se configurado)
       if (isWhatsAppConfigured() && orderData && orderData[0]) {
         try {
-          await sendOrderConfirmation(orderData[0])
-          console.log('✅ WhatsApp de confirmação enviado')
+          const result = await sendOrderConfirmation(orderData[0])
+          if (result.success) {
+            console.log('✅ WhatsApp de confirmação enviado')
+          } else {
+            console.warn('⚠️ WhatsApp não enviado:', result.error)
+          }
         } catch (whatsappError) {
           console.error('❌ Erro ao enviar WhatsApp:', whatsappError)
           // Não bloquear o fluxo se WhatsApp falhar
         }
+      } else {
+        console.log('ℹ️ WhatsApp não configurado, mensagem não será enviada')
       }
 
       // Limpar formulário

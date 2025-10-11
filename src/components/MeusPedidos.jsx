@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Package, Star } from 'lucide-react';
 import { supabase, isSupabaseConfigured } from '../supabaseClient.js';
 import { useAuth } from '../AuthContext.jsx';
+import { formatDate, formatTime } from '../utils/dateUtils.js';
 import AvaliarPedido from './AvaliarPedido';
 import './MeusPedidos.css';
 
@@ -181,25 +182,13 @@ function MeusPedidos() {
         <div className="pedidos-list">
           {pedidosFiltrados.map((pedido) => {
             const detalhes = pedido.detalhes_pedido || {};
-            const dataHora = new Date(pedido.created_at);
-            // Formatar data e hora corretamente (Brasil)
-            const dataFormatada = dataHora.toLocaleDateString('pt-BR', {
-              day: '2-digit',
-              month: '2-digit',
-              year: 'numeric'
-            });
-            const horaFormatada = dataHora.toLocaleTimeString('pt-BR', {
-              hour: '2-digit',
-              minute: '2-digit',
-              second: '2-digit'
-            });
 
             return (
               <div 
                 key={pedido.id} 
                 className={`pedido-card status-${(pedido.status || '').replace(/\s+/g, '-').toLowerCase()}`}
               >
-                <p className="pedido-info"><strong>Horário:</strong> {dataFormatada} às {horaFormatada}</p>
+                <p className="pedido-info"><strong>Horário:</strong> {formatDate(pedido.created_at)} às {formatTime(pedido.created_at)}</p>
                 
                 {/* Tipo de Açaí */}
                 {detalhes.tipo_acai && (
@@ -271,6 +260,14 @@ function MeusPedidos() {
                   <p className="pedido-info" style={{color: '#22c55e', fontWeight: 'bold'}}>
                     🎉 Usou açaí grátis!
                   </p>
+                )}
+                
+                {/* Observações do Cliente */}
+                {pedido.observacoes && (
+                  <div className="observacoes-section">
+                    <strong>📝 Observações:</strong>
+                    <p className="observacoes-text">{pedido.observacoes}</p>
+                  </div>
                 )}
                 
                 {/* Total */}

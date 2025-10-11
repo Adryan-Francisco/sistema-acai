@@ -1,6 +1,7 @@
 // src/components/AvaliacoesAdmin.jsx
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../supabaseClient';
+import { formatDateTime } from '../utils/dateUtils';
 import { Star, MessageSquare, TrendingUp, Award, Filter, Search } from 'lucide-react';
 import './AvaliacoesAdmin.css';
 
@@ -31,7 +32,7 @@ export default function AvaliacoesAdmin() {
             id,
             detalhes_pedido,
             created_at,
-            usuario_id
+            user_id
           ),
           profiles:usuario_id (
             nome,
@@ -89,15 +90,7 @@ export default function AvaliacoesAdmin() {
     ));
   };
 
-  const formatarData = (data) => {
-    return new Date(data).toLocaleDateString('pt-BR', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
-  };
+  // Função removida - usando formatDateTime do dateUtils
 
   if (loading) {
     return (
@@ -211,7 +204,7 @@ export default function AvaliacoesAdmin() {
                   </div>
                   <div>
                     <h4>{avaliacao.profiles?.nome || 'Cliente'}</h4>
-                    <p className="avaliacao-data">{formatarData(avaliacao.created_at)}</p>
+                    <p className="avaliacao-data">{formatDateTime(avaliacao.created_at)}</p>
                   </div>
                 </div>
                 <div className="avaliacao-nota">
@@ -229,7 +222,7 @@ export default function AvaliacoesAdmin() {
               <div className="avaliacao-pedido-info">
                 <span>Pedido #{avaliacao.pedido_id.slice(0, 8)}</span>
                 <span>R$ {avaliacao.pedidos?.detalhes_pedido?.total?.toFixed(2) || '0.00'}</span>
-                <span>{formatarData(avaliacao.pedidos?.created_at)}</span>
+                <span>{formatDateTime(avaliacao.pedidos?.created_at)}</span>
               </div>
             </div>
           ))

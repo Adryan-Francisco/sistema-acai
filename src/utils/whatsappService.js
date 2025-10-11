@@ -236,24 +236,51 @@ export async function sendWhatsAppMessage(phone, message) {
  * Envia confirmação de pedido
  */
 export async function sendOrderConfirmation(order) {
-  const message = generateOrderConfirmationMessage(order)
-  return await sendWhatsAppMessage(order.telefone, message)
+  try {
+    if (!order.telefone) {
+      console.warn('⚠️ Pedido sem telefone, WhatsApp não enviado')
+      return { success: false, error: 'Telefone não informado' }
+    }
+    const message = generateOrderConfirmationMessage(order)
+    return await sendWhatsAppMessage(order.telefone, message)
+  } catch (error) {
+    console.error('❌ Erro ao enviar confirmação WhatsApp:', error)
+    return { success: false, error: error.message }
+  }
 }
 
 /**
  * Envia atualização de status
  */
 export async function sendStatusUpdate(order, newStatus) {
-  const message = generateStatusUpdateMessage(order, newStatus)
-  return await sendWhatsAppMessage(order.telefone, message)
+  try {
+    if (!order.telefone) {
+      console.warn('⚠️ Pedido sem telefone, WhatsApp não enviado')
+      return { success: false, error: 'Telefone não informado' }
+    }
+    const message = generateStatusUpdateMessage(order, newStatus)
+    return await sendWhatsAppMessage(order.telefone, message)
+  } catch (error) {
+    console.error('❌ Erro ao enviar atualização WhatsApp:', error)
+    return { success: false, error: error.message }
+  }
 }
 
 /**
  * Envia lembrete de avaliação (após entrega)
  */
 export async function sendReviewReminder(order) {
-  const message = generateReviewReminderMessage(order)
-  return await sendWhatsAppMessage(order.telefone, message)
+  try {
+    if (!order.telefone) {
+      console.warn('⚠️ Pedido sem telefone, WhatsApp não enviado')
+      return { success: false, error: 'Telefone não informado' }
+    }
+    const message = generateReviewReminderMessage(order)
+    return await sendWhatsAppMessage(order.telefone, message)
+  } catch (error) {
+    console.error('❌ Erro ao enviar lembrete WhatsApp:', error)
+    return { success: false, error: error.message }
+  }
 }
 
 /**

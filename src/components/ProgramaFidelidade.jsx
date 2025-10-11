@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../supabaseClient';
 import { useAuth } from '../AuthContext';
+import { formatDate } from '../utils/dateUtils';
 import { Star, Gift, TrendingUp, Award, ArrowLeft, CheckCircle, Calendar, Trophy } from 'lucide-react';
 import './ProgramaFidelidade.css';
 
@@ -39,7 +40,7 @@ export default function ProgramaFidelidade() {
       const { data: pedidos, error: pedidosError } = await supabase
         .from('pedidos')
         .select('id, created_at, status, detalhes_pedido')
-        .eq('usuario_id', session.user.id)
+        .eq('user_id', session.user.id)
         .order('created_at', { ascending: false })
         .limit(10);
 
@@ -232,7 +233,7 @@ export default function ProgramaFidelidade() {
                       {pedido.detalhes_pedido?.tipo_acai || 'Açaí'}
                     </p>
                     <p className="historico-data">
-                      {new Date(pedido.created_at).toLocaleDateString('pt-BR')}
+                      {formatDate(pedido.created_at)}
                     </p>
                   </div>
                   <div className="historico-pontos">

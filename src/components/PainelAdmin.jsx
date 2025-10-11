@@ -6,6 +6,7 @@ import { supabase, isSupabaseConfigured } from '../supabaseClient';
 import { useAuth } from '../AuthContext';
 import { playNotificationSound } from '../utils/notificationSound';
 import { sendStatusUpdate, sendReviewReminder, isWhatsAppConfigured } from '../utils/whatsappService';
+import { formatDate, formatTime } from '../utils/dateUtils';
 import ThemeToggle from './ThemeToggle';
 import './PainelAdmin.css';
 
@@ -186,6 +187,18 @@ function PainelAdmin() {
             left: 0;
           }
           
+          .observacoes-box {
+            background: #f9f9f9;
+            border: 2px dashed #666;
+            border-radius: 5px;
+            padding: 8px;
+            margin: 5px 0;
+            font-size: 10px;
+            line-height: 1.4;
+            white-space: pre-wrap;
+            word-break: break-word;
+          }
+          
           .total {
             text-align: center;
             margin: 10px 0;
@@ -231,7 +244,7 @@ function PainelAdmin() {
         
         <div class="client-box">
           <div class="client-label">CLIENTE: ${pedido.nome_cliente.toUpperCase()}</div>
-          <div class="client-info">Data: ${new Date(pedido.created_at).toLocaleDateString('pt-BR')} Hora: ${new Date(pedido.created_at).toLocaleTimeString('pt-BR')}</div>
+          <div class="client-info">Data: ${formatDate(pedido.created_at)} Hora: ${formatTime(pedido.created_at)}</div>
         </div>
         
         <div class="divider"></div>
@@ -245,6 +258,13 @@ function PainelAdmin() {
         <ul class="extras-list">
           ${todosComplementos.map(c => `<li>${c}</li>`).join('')}
         </ul>
+        ` : ''}
+        
+        ${pedido.observacoes ? `
+        <div class="section-title">📝 OBSERVAÇÕES DO CLIENTE</div>
+        <div class="observacoes-box">
+          ${pedido.observacoes}
+        </div>
         ` : ''}
         
         <div class="divider"></div>
@@ -824,7 +844,7 @@ function PainelAdmin() {
               className={`pedido-card status-${(pedido.status || '').replace(/\s+/g, '-').toLowerCase()}`}
             >
               <h3 className="cliente-nome">Pedido de: {pedido.nome_cliente}</h3>
-              <p className="pedido-info"><strong>Horário:</strong> {new Date(pedido.created_at).toLocaleTimeString('pt-BR')}</p>
+              <p className="pedido-info"><strong>Horário:</strong> {formatDate(pedido.created_at)} às {formatTime(pedido.created_at)}</p>
               
               {/* Tipo de Açaí */}
               {pedido.detalhes_pedido.tipo_acai && (
@@ -906,6 +926,14 @@ function PainelAdmin() {
                   <p style={{ color: '#6b7280', fontStyle: 'italic', marginTop: '8px' }}>Nenhum complemento</p>
                 )}
               </div>
+              
+              {/* Observações do Cliente */}
+              {pedido.observacoes && (
+                <div className="observacoes-section">
+                  <strong>📝 Observações do Cliente:</strong>
+                  <p className="observacoes-text">{pedido.observacoes}</p>
+                </div>
+              )}
               
               <p className="pedido-info total-pedido"><strong>Total:</strong> R$ {pedido.detalhes_pedido.total}</p>
               <p className="pedido-info status-pedido"><strong>Status:</strong> <span className="status-text">{pedido.status}</span></p>

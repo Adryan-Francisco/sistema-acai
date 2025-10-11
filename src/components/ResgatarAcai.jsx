@@ -64,7 +64,7 @@ export default function ResgatarAcai() {
       const { error: pedidoError } = await supabase
         .from('pedidos')
         .insert({
-          usuario_id: session.user.id,
+          user_id: session.user.id,
           nome_cliente: userName || session.user.email?.split('@')[0] || 'Cliente',
           detalhes_pedido: {
             tipo: 'resgate_fidelidade',

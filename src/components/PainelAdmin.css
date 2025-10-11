@@ -602,6 +602,35 @@
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
+/* Observações do Cliente */
+.observacoes-section {
+  margin: var(--space-md) 0;
+  padding: var(--space-sm);
+  background: rgba(251, 146, 60, 0.08);
+  border-radius: var(--radius-sm);
+  border-left: 3px solid #f97316;
+}
+
+.observacoes-section strong {
+  color: #9a3412;
+  font-weight: 600;
+  display: block;
+  margin-bottom: var(--space-xs);
+  font-size: 0.9rem;
+}
+
+.observacoes-text {
+  color: #374151;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  margin: 0;
+  white-space: pre-wrap;
+  word-break: break-word;
+  padding: var(--space-xs);
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: var(--radius-xs);
+}
+
 /* Estilo para método de pagamento */
 .metodo-pagamento {
   background: rgba(139, 92, 246, 0.05);
@@ -1153,6 +1182,21 @@
 @keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
+}
+
+/* ========== DARK MODE - OBSERVAÇÕES ========== */
+[data-theme="dark"] .observacoes-section {
+  background: rgba(251, 146, 60, 0.15);
+  border-left-color: #fb923c;
+}
+
+[data-theme="dark"] .observacoes-section strong {
+  color: #fed7aa;
+}
+
+[data-theme="dark"] .observacoes-text {
+  color: #e5e7eb;
+  background: rgba(31, 41, 55, 0.5);
 }
 
 .modal-confirmacao {

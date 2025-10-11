@@ -26,7 +26,7 @@ export default function AvaliarPedido({ pedido, onClose, onAvaliacaoEnviada }) {
         .from('avaliacoes')
         .insert({
           pedido_id: pedido.id,
-          usuario_id: pedido.usuario_id,
+          usuario_id: pedido.user_id,
           nota,
           comentario: comentario.trim() || null
         });

@@ -237,6 +237,35 @@
   line-height: 1.5;
 }
 
+/* ========== OBSERVAÇÕES ========== */
+.observacoes-section {
+  margin: 1rem 0;
+  padding: 0.875rem;
+  background: rgba(251, 146, 60, 0.08);
+  border-radius: 0.5rem;
+  border-left: 3px solid #f97316;
+}
+
+.observacoes-section strong {
+  color: #9a3412;
+  font-weight: 600;
+  display: block;
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.observacoes-text {
+  color: #374151;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  margin: 0;
+  white-space: pre-wrap;
+  word-break: break-word;
+  padding: 0.5rem;
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 0.375rem;
+}
+
 /* ========== STATUS DO PEDIDO ========== */
 .status-pedido {
   margin: 1rem 0 0 0;
@@ -449,4 +478,27 @@
   .total-pedido {
     font-size: 1.1rem;
   }
+}
+
+/* ========== DARK THEME ========== */
+.dark-theme .observacoes-section {
+  background: rgba(251, 146, 60, 0.15);
+  border-left-color: #fb923c;
+}
+
+.dark-theme .observacoes-section strong {
+  color: #fed7aa;
+}
+
+.dark-theme .observacoes-text {
+  color: #e5e7eb;
+  background: rgba(31, 41, 55, 0.5);
+}
+
+.dark-theme .complementos-section {
+  background: rgba(147, 51, 234, 0.1);
+}
+
+.dark-theme .complementos-section strong {
+  color: #e9d5ff;
 }
