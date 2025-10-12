@@ -1,0 +1,283 @@
+/* src/components/NotificationPrompt.css */
+
+.notification-prompt-overlay {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  top: 0;
+  background: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(2px);
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  animation: fadeIn 0.3s ease;
+}
+
+.notification-prompt-overlay.closing {
+  animation: fadeOut 0.3s ease;
+}
+
+.notification-prompt {
+  background: white;
+  padding: 30px 24px;
+  border-radius: 16px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  max-width: 420px;
+  width: 100%;
+  position: relative;
+  text-align: center;
+}
+
+.notification-prompt.slide-in {
+  animation: slideUp 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.notification-prompt.slide-out {
+  animation: slideDown 0.3s ease;
+}
+
+.notification-prompt .close-btn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: #9ca3af;
+  padding: 8px;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.notification-prompt .close-btn:hover {
+  background: rgba(0, 0, 0, 0.05);
+  color: #4b5563;
+}
+
+.notification-icon {
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 20px;
+  background: linear-gradient(135deg, #9333ea 0%, #7c3aed 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  animation: pulse 2s infinite;
+}
+
+.notification-prompt h3 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0 0 12px 0;
+}
+
+.notification-prompt p {
+  font-size: 1rem;
+  color: #6b7280;
+  margin: 0 0 16px 0;
+  line-height: 1.5;
+}
+
+.benefits-list {
+  list-style: none;
+  padding: 0;
+  margin: 20px 0;
+  text-align: left;
+  background: rgba(147, 51, 234, 0.05);
+  padding: 16px;
+  border-radius: 12px;
+  border-left: 4px solid #9333ea;
+}
+
+.benefits-list li {
+  padding: 8px 0;
+  color: #374151;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.notification-prompt-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 24px;
+}
+
+.btn-enable {
+  flex: 1;
+  background: linear-gradient(135deg, #9333ea 0%, #7c3aed 100%);
+  color: white;
+  padding: 14px 24px;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(147, 51, 234, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.btn-enable:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 25px rgba(147, 51, 234, 0.4);
+}
+
+.btn-enable:active {
+  transform: translateY(0);
+}
+
+.btn-later {
+  flex: 1;
+  background: #f3f4f6;
+  color: #6b7280;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
+}
+
+.btn-later:hover {
+  background: #e5e7eb;
+  color: #4b5563;
+}
+
+.privacy-note {
+  font-size: 0.85rem;
+  color: #9ca3af;
+  margin-top: 16px;
+  margin-bottom: 0;
+}
+
+/* Animações */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(100px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateY(100px);
+    opacity: 0;
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+/* Responsivo */
+@media (max-width: 480px) {
+  .notification-prompt {
+    padding: 24px 20px;
+    margin: 0 10px;
+  }
+
+  .notification-prompt h3 {
+    font-size: 1.25rem;
+  }
+
+  .notification-icon {
+    width: 70px;
+    height: 70px;
+  }
+
+  .benefits-list {
+    padding: 12px;
+  }
+
+  .benefits-list li {
+    font-size: 0.9rem;
+    padding: 6px 0;
+  }
+}
+
+/* Dark Mode */
+[data-theme="dark"] .notification-prompt {
+  background: #1f2937;
+}
+
+[data-theme="dark"] .notification-prompt h3 {
+  color: #f9fafb;
+}
+
+[data-theme="dark"] .notification-prompt p {
+  color: #d1d5db;
+}
+
+[data-theme="dark"] .benefits-list {
+  background: rgba(147, 51, 234, 0.15);
+}
+
+[data-theme="dark"] .benefits-list li {
+  color: #e5e7eb;
+}
+
+[data-theme="dark"] .btn-later {
+  background: rgba(255, 255, 255, 0.1);
+  color: #d1d5db;
+}
+
+[data-theme="dark"] .btn-later:hover {
+  background: rgba(255, 255, 255, 0.15);
+  color: #f9fafb;
+}
+
+[data-theme="dark"] .notification-prompt .close-btn {
+  color: #d1d5db;
+}
+
+[data-theme="dark"] .notification-prompt .close-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #f9fafb;
+}

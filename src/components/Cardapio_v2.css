@@ -481,47 +481,154 @@
 /* ============================================
    QUANTITY SELECTOR
    ============================================ */
-.cardapio-v2-quantity {
+/* ============================================
+   QUANTITY SELECTOR
+   ============================================ */
+.cardapio-v2-quantity-container {
   display: flex;
   align-items: center;
-  gap: var(--spacing-md);
+  gap: var(--spacing-lg);
+  justify-content: center;
+  padding: var(--spacing-md);
+  background: linear-gradient(135deg, rgba(147, 51, 234, 0.05) 0%, rgba(124, 58, 237, 0.05) 100%);
+  border-radius: var(--radius-lg);
+  border: 2px solid rgba(147, 51, 234, 0.1);
 }
 
 .cardapio-v2-quantity-button {
-  width: 48px;
-  height: 48px;
-  border: 2px solid var(--gray-300);
-  border-radius: var(--radius);
+  width: 56px;
+  height: 56px;
+  border: 3px solid var(--purple-500);
+  border-radius: 50%;
   background: white;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: all var(--transition-base);
+  box-shadow: 0 2px 8px rgba(147, 51, 234, 0.15);
+  color: var(--purple-600);
+  font-weight: bold;
+  font-size: 32px;
+  line-height: 1;
+  padding: 0;
+}
+
+.cardapio-v2-quantity-button.minus {
+  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+  border-color: #f59e0b;
+  color: #b45309;
+  font-size: 40px;
+  padding-bottom: 4px;
+}
+
+.cardapio-v2-quantity-button.plus {
+  background: linear-gradient(135deg, #9333ea 0%, #7c3aed 100%);
+  border-color: #7c3aed;
+  color: white;
+  font-size: 32px;
+  font-weight: 300;
 }
 
 .cardapio-v2-quantity-button:hover:not(:disabled) {
-  border-color: var(--purple-600);
-  background: var(--purple-50);
-  transform: scale(1.1);
+  transform: scale(1.15);
+  box-shadow: 0 4px 16px rgba(147, 51, 234, 0.3);
+}
+
+.cardapio-v2-quantity-button.minus:hover:not(:disabled) {
+  box-shadow: 0 4px 16px rgba(245, 158, 11, 0.3);
+}
+
+.cardapio-v2-quantity-button.plus:hover:not(:disabled) {
+  box-shadow: 0 4px 16px rgba(147, 51, 234, 0.5);
+}
+
+.cardapio-v2-quantity-button:active:not(:disabled) {
+  transform: scale(1.05);
 }
 
 .cardapio-v2-quantity-button:disabled {
-  opacity: 0.5;
+  opacity: 0.4;
   cursor: not-allowed;
+  transform: none !important;
+}
+
+.cardapio-v2-quantity-display {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 80px;
 }
 
 .cardapio-v2-quantity-value {
-  font-size: 1.5rem;
-  font-weight: bold;
-  color: var(--gray-900);
-  min-width: 48px;
-  text-align: center;
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--purple-800);
+  line-height: 1;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.cardapio-v2-quantity-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--purple-600);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-top: 4px;
+}
+
+.cardapio-v2-quantity-hint-label {
+  font-size: 0.75rem;
+  color: var(--gray-500);
+  font-weight: 400;
+  margin-left: var(--spacing-sm);
 }
 
 .cardapio-v2-quantity-hint {
   font-size: 0.875rem;
   color: var(--gray-600);
+}
+
+/* ============================================
+   PHONE INPUT
+   ============================================ */
+.cardapio-v2-phone-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.cardapio-v2-phone-icon {
+  position: absolute;
+  left: 16px;
+  font-size: 1.25rem;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.cardapio-v2-phone-input {
+  width: 100%;
+  padding: var(--spacing-md) var(--spacing-md) var(--spacing-md) 52px;
+  border: 2px solid var(--gray-300);
+  border-radius: var(--radius);
+  font-size: 1rem;
+  font-weight: 500;
+  transition: all var(--transition-base);
+  background: white;
+  letter-spacing: 0.5px;
+}
+
+.cardapio-v2-phone-input:focus {
+  outline: none;
+  border-color: var(--purple-500);
+  box-shadow: 0 0 0 4px rgba(147, 51, 234, 0.1);
+  background: rgba(147, 51, 234, 0.02);
+}
+
+.cardapio-v2-phone-input::placeholder {
+  color: var(--gray-400);
+  font-weight: 400;
 }
 
 /* ============================================
@@ -1597,6 +1704,56 @@
 [data-theme="dark"] .cardapio-v2-delivery-button.selected .delivery-title,
 [data-theme="dark"] .cardapio-v2-delivery-button.selected .delivery-price {
   color: #c084fc;
+}
+
+/* Dark Mode - Quantidade e Telefone */
+[data-theme="dark"] .cardapio-v2-quantity-container {
+  background: rgba(147, 51, 234, 0.15);
+  border-color: rgba(147, 51, 234, 0.3);
+}
+
+[data-theme="dark"] .cardapio-v2-quantity-button.minus {
+  background: linear-gradient(135deg, rgba(254, 243, 199, 0.15) 0%, rgba(253, 230, 138, 0.15) 100%);
+  border-color: rgba(249, 115, 22, 0.4);
+  color: #fbbf24;
+}
+
+[data-theme="dark"] .cardapio-v2-quantity-button.minus:hover {
+  background: linear-gradient(135deg, rgba(254, 243, 199, 0.25) 0%, rgba(253, 230, 138, 0.25) 100%);
+  box-shadow: 0 8px 16px rgba(251, 191, 36, 0.3);
+}
+
+[data-theme="dark"] .cardapio-v2-quantity-button.plus {
+  background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
+  box-shadow: 0 4px 12px rgba(124, 58, 237, 0.4);
+}
+
+[data-theme="dark"] .cardapio-v2-quantity-button.plus:hover {
+  box-shadow: 0 8px 20px rgba(124, 58, 237, 0.6);
+}
+
+[data-theme="dark"] .cardapio-v2-quantity-value {
+  color: #c084fc;
+  text-shadow: 0 2px 8px rgba(192, 132, 252, 0.5);
+}
+
+[data-theme="dark"] .cardapio-v2-quantity-label {
+  color: #d1d5db;
+}
+
+[data-theme="dark"] .cardapio-v2-phone-input {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.15);
+  color: #f9fafb;
+}
+
+[data-theme="dark"] .cardapio-v2-phone-input:focus {
+  border-color: #9333ea;
+  box-shadow: 0 0 0 3px rgba(147, 51, 234, 0.3);
+}
+
+[data-theme="dark"] .cardapio-v2-phone-icon {
+  opacity: 0.8;
 }
 
 /* ========================================

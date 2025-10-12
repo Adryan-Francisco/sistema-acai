@@ -6,6 +6,7 @@ import { supabase, isSupabaseConfigured } from '../supabaseClient';
 import { useAuth } from '../AuthContext';
 import { playNotificationSound } from '../utils/notificationSound';
 import { sendStatusUpdate, sendReviewReminder, isWhatsAppConfigured } from '../utils/whatsappService';
+import { notifyOrderStatusChange } from '../utils/pushNotifications';
 import { formatDate, formatTime } from '../utils/dateUtils';
 import ThemeToggle from './ThemeToggle';
 import './PainelAdmin.css';
@@ -443,6 +444,22 @@ function PainelAdmin() {
           console.error('❌ Erro ao enviar WhatsApp:', whatsappError)
           // Não bloquear o fluxo se WhatsApp falhar
         }
+      }
+      
+      // 🔔 Enviar notificação push de atualização
+      try {
+        await notifyOrderStatusChange(
+          pedidoId,
+          novoStatus,
+          {
+            deliveryType: upd[0].detalhes_pedido?.tipo_entrega || 'retirada',
+            customerName: upd[0].nome_cliente
+          }
+        )
+        console.log('✅ Notificação push de status enviada')
+      } catch (notifError) {
+        console.error('⚠️ Erro ao enviar notificação push:', notifError)
+        // Não bloquear se falhar
       }
       
       // Limpar mensagem após 3 segundos

@@ -9,6 +9,7 @@ import { useNotification } from './NotificationToast.jsx'
 import ThemeToggle from './ThemeToggle.jsx'
 import PixPayment from './PixPayment.jsx'
 import { sendOrderConfirmation, isWhatsAppConfigured } from '../utils/whatsappService.js'
+import { notifyOrderStatusChange } from '../utils/pushNotifications'
 import './Cardapio_v2.css'
 
 export default function CardapioV2() {
@@ -406,6 +407,22 @@ export default function CardapioV2() {
         console.log('ℹ️ WhatsApp não configurado, mensagem não será enviada')
       }
 
+      // 🔔 Enviar notificação push de confirmação
+      try {
+        await notifyOrderStatusChange(
+          orderData[0].id,
+          paymentMethod === 'PIX' ? 'Aguardando Pagamento' : 'Recebido',
+          {
+            deliveryType: deliveryType,
+            customerName: userData.nome
+          }
+        )
+        console.log('✅ Notificação push enviada')
+      } catch (notifError) {
+        console.error('⚠️ Erro ao enviar notificação push:', notifError)
+        // Não bloquear se falhar
+      }
+
       // Limpar formulário
       setSelectedToppings([])
       setQuantity(1)
@@ -704,24 +721,31 @@ export default function CardapioV2() {
 
           {/* Quantity */}
           <div className="cardapio-v2-section">
-            <label className="cardapio-v2-section-label">Quantidade</label>
-            <div className="cardapio-v2-quantity">
+            <label className="cardapio-v2-section-label">
+              🔢 Quantidade
+              {useFreeAcai && <span className="cardapio-v2-quantity-hint-label">(Fixo ao usar açaí grátis)</span>}
+            </label>
+            <div className="cardapio-v2-quantity-container">
               <button
-                className="cardapio-v2-quantity-button"
+                className="cardapio-v2-quantity-button minus"
                 onClick={() => setQuantity(Math.max(1, quantity - 1))}
                 disabled={useFreeAcai}
+                title="Diminuir quantidade"
               >
-                <Minus size={16} />
+                −
               </button>
-              <span className="cardapio-v2-quantity-value">{quantity}</span>
+              <div className="cardapio-v2-quantity-display">
+                <span className="cardapio-v2-quantity-value">{quantity}</span>
+                <span className="cardapio-v2-quantity-label">unidade{quantity > 1 ? 's' : ''}</span>
+              </div>
               <button
-                className="cardapio-v2-quantity-button"
+                className="cardapio-v2-quantity-button plus"
                 onClick={() => setQuantity(quantity + 1)}
                 disabled={useFreeAcai}
+                title="Aumentar quantidade"
               >
-                <Plus size={16} />
+                +
               </button>
-              {useFreeAcai && <span className="cardapio-v2-quantity-hint">(Quantidade fixa ao usar açaí grátis)</span>}
             </div>
           </div>
 
@@ -768,15 +792,21 @@ export default function CardapioV2() {
 
           {/* Phone Number */}
           <div className="cardapio-v2-section">
-            <label className="cardapio-v2-section-label">Telefone para Contato *</label>
-            <input
-              type="tel"
-              value={phoneNumber}
-              onChange={handlePhoneChange}
-              placeholder="(00) 00000-0000"
-              maxLength={15}
-              className="cardapio-v2-phone-input"
-            />
+            <label className="cardapio-v2-section-label">
+              📱 Telefone para Contato *
+              <span className="cardapio-v2-section-label-hint">Usaremos para atualizar sobre seu pedido</span>
+            </label>
+            <div className="cardapio-v2-phone-wrapper">
+              <span className="cardapio-v2-phone-icon">📞</span>
+              <input
+                type="tel"
+                value={phoneNumber}
+                onChange={handlePhoneChange}
+                placeholder="(00) 00000-0000"
+                maxLength={15}
+                className="cardapio-v2-phone-input"
+              />
+            </div>
           </div>
 
           {/* Delivery Address - Only show if delivery is selected */}

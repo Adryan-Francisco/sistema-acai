@@ -4,6 +4,7 @@ import { BrowserRouter, Routes, Route, NavLink, useNavigate } from 'react-router
 import { useAuth } from './AuthContext';
 import { ThemeProvider } from './ThemeContext';
 import NotificationProvider from './components/NotificationToast';
+import NotificationPrompt from './components/NotificationPrompt';
 
 // Importação de todos os componentes de página
 import HomePage from './components/HomePage';
@@ -258,16 +259,20 @@ function Navigation() {
 function App() {
   const envMissing = !import.meta.env.VITE_SUPABASE_URL || !import.meta.env.VITE_SUPABASE_ANON_KEY;
 
+  // Usar basename apenas em produção (GitHub Pages)
+  const basename = import.meta.env.PROD ? '/sistema-acai' : '/';
+
   return (
     <ThemeProvider>
     <NotificationProvider>
-      <BrowserRouter basename="/sistema-acai">
+      <BrowserRouter basename={basename}>
       {envMissing && (
         <div className="env-warning">
           Supabase não configurado. Crie o arquivo .env com VITE_SUPABASE_URL e VITE_SUPABASE_ANON_KEY (veja .env.example) e reinicie o servidor.
         </div>
       )}
       {/* <Navigation /> */}
+      <NotificationPrompt />
       <div className="main-content">
         <Routes>
           {/* Rotas Públicas */}

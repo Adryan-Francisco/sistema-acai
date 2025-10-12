@@ -4,7 +4,8 @@ import react from '@vitejs/plugin-react'
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],
-  base: '/sistema-acai/',
+  // Base URL apenas para produção (GitHub Pages)
+  base: process.env.NODE_ENV === 'production' ? '/sistema-acai/' : '/',
   build: {
     outDir: 'dist',
     assetsDir: 'assets',
@@ -20,6 +21,6 @@ export default defineConfig({
   },
   // Configuração para desenvolvimento
   server: {
-    open: '/sistema-acai/',
+    open: true,
   }
 })

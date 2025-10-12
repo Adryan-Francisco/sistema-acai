@@ -1,11 +1,13 @@
 // src/components/AvaliacoesAdmin.jsx
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { supabase } from '../supabaseClient';
 import { formatDateTime } from '../utils/dateUtils';
-import { Star, MessageSquare, TrendingUp, Award, Filter, Search } from 'lucide-react';
+import { Star, MessageSquare, TrendingUp, Award, Filter, Search, ArrowLeft } from 'lucide-react';
 import './AvaliacoesAdmin.css';
 
 export default function AvaliacoesAdmin() {
+  const navigate = useNavigate();
   const [avaliacoes, setAvaliacoes] = useState([]);
   const [stats, setStats] = useState({
     total: 0,
@@ -104,6 +106,14 @@ export default function AvaliacoesAdmin() {
   return (
     <div className="avaliacoes-admin">
       <div className="avaliacoes-header">
+        <button 
+          className="avaliacoes-voltar-btn"
+          onClick={() => navigate('/admin')}
+          title="Voltar ao Painel Admin"
+        >
+          <ArrowLeft size={20} />
+          <span>Voltar</span>
+        </button>
         <h2>⭐ Avaliações dos Clientes</h2>
       </div>
 

@@ -55,8 +55,14 @@ export async function registerServiceWorker() {
   }
 
   try {
-    const registration = await navigator.serviceWorker.register('/sw.js', {
-      scope: '/',
+    // Usar caminho correto baseado no ambiente
+    const baseUrl = import.meta.env.BASE_URL || '/';
+    const swUrl = baseUrl === '/' ? '/sw.js' : `${baseUrl}sw.js`;
+    
+    console.log('📝 Registrando Service Worker em:', swUrl);
+    
+    const registration = await navigator.serviceWorker.register(swUrl, {
+      scope: baseUrl,
     });
 
     console.log('✅ Service Worker registrado:', registration);
@@ -68,6 +74,7 @@ export async function registerServiceWorker() {
     return registration;
   } catch (error) {
     console.error('❌ Erro ao registrar Service Worker:', error);
+    console.error('Detalhes:', error.message);
     return null;
   }
 }
