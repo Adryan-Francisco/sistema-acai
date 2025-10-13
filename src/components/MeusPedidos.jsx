@@ -1,20 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Package, Star } from 'lucide-react';
+import { ArrowLeft, Package, Star, Bell } from 'lucide-react';
 import { supabase, isSupabaseConfigured } from '../supabaseClient.js';
 import { useAuth } from '../AuthContext.jsx';
 import { formatDate, formatTime } from '../utils/dateUtils.js';
+import { useNotification } from './NotificationToast.jsx';
+import { playNotificationSound } from '../utils/notificationSound.js';
 import AvaliarPedido from './AvaliarPedido';
 import './MeusPedidos.css';
 
 function MeusPedidos() {
   const navigate = useNavigate();
+  const { success, info } = useNotification();
   const [pedidos, setPedidos] = useState([]);
   const [pedidosFiltrados, setPedidosFiltrados] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filtroStatus, setFiltroStatus] = useState('todos');
   const [buscaTexto, setBuscaTexto] = useState('');
   const [pedidoParaAvaliar, setPedidoParaAvaliar] = useState(null);
+  const [pedidoAtualizado, setPedidoAtualizado] = useState(null);
   const { user, session } = useAuth();
 
   useEffect(() => {
@@ -67,6 +71,19 @@ function MeusPedidos() {
         },
         (payload) => {
           console.log('🔔 Atualização de pedido recebida:', payload.new);
+          
+          // Mostrar notificação visual
+          const statusTexto = getStatusTexto(payload.new.status);
+          info(`📦 Pedido #${payload.new.id.slice(0, 8)} atualizado: ${statusTexto}`);
+          
+          // Tocar som de notificação
+          playNotificationSound();
+          
+          // Destacar pedido atualizado
+          setPedidoAtualizado(payload.new.id);
+          setTimeout(() => setPedidoAtualizado(null), 3000);
+          
+          // Atualizar lista de pedidos
           setPedidos((prevPedidos) => {
             const updated = prevPedidos.map(p => 
               p.id === payload.new.id ? payload.new : p
@@ -81,10 +98,15 @@ function MeusPedidos() {
           });
         }
       )
-      .subscribe();
+      .subscribe((status) => {
+        console.log('📡 Status da conexão Realtime:', status);
+      });
 
     return () => {
-      if (channel) supabase.removeChannel(channel);
+      if (channel) {
+        console.log('🔌 Desconectando do Realtime');
+        supabase.removeChannel(channel);
+      }
     };
   }, [user]);
 
@@ -112,6 +134,20 @@ function MeusPedidos() {
     setPedidosFiltrados(filtrados);
   }, [pedidos, filtroStatus, buscaTexto]);
 
+  // Função helper para converter status em texto amigável
+  const getStatusTexto = (status) => {
+    const statusMap = {
+      'pendente': '⏳ Pendente',
+      'confirmado': '✅ Confirmado',
+      'preparando': '👨‍🍳 Em Preparo',
+      'pronto': '🎉 Pronto para Retirada',
+      'saiu-para-entrega': '🚚 Saiu para Entrega',
+      'concluído': '✅ Concluído',
+      'cancelado': '❌ Cancelado'
+    };
+    return statusMap[status?.toLowerCase()] || status;
+  };
+
   if (loading) {
     return (
       <div className="meus-pedidos-loading">
@@ -127,12 +163,16 @@ function MeusPedidos() {
       <div className="meus-pedidos-header">
         <button onClick={() => navigate('/')} className="btn-voltar">
           <ArrowLeft size={20} />
-          Voltar ao Cardápio
+          Voltar
         </button>
         <h1>
           <Package size={32} />
           Meus Pedidos
         </h1>
+        <span className="realtime-indicator" title="Atualizações em tempo real ativadas">
+          <span className="realtime-dot"></span>
+          Ao vivo
+        </span>
       </div>
 
       <div className="meus-pedidos-container">
@@ -182,12 +222,19 @@ function MeusPedidos() {
         <div className="pedidos-list">
           {pedidosFiltrados.map((pedido) => {
             const detalhes = pedido.detalhes_pedido || {};
+            const isAtualizado = pedidoAtualizado === pedido.id;
 
             return (
               <div 
                 key={pedido.id} 
-                className={`pedido-card status-${(pedido.status || '').replace(/\s+/g, '-').toLowerCase()}`}
+                className={`pedido-card status-${(pedido.status || '').replace(/\s+/g, '-').toLowerCase()} ${isAtualizado ? 'pedido-atualizado' : ''}`}
               >
+                {isAtualizado && (
+                  <div className="badge-atualizado">
+                    <Bell size={14} />
+                    Atualizado agora!
+                  </div>
+                )}
                 <p className="pedido-info"><strong>Horário:</strong> {formatDate(pedido.created_at)} às {formatTime(pedido.created_at)}</p>
                 
                 {/* Tipo de Açaí */}

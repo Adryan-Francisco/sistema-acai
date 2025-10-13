@@ -9,47 +9,105 @@
 
 /* ========== HEADER ========== */
 .meus-pedidos-header {
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(12px);
-  border-bottom: 1px solid rgba(209, 213, 219, 0.5);
-  padding: 1.5rem 2rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  background: #ffffff;
+  border-bottom: 2px solid #e5e7eb;
+  padding: 1.25rem 2rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   position: sticky;
   top: 0;
   z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
 }
 
 .meus-pedidos-header h1 {
-  font-size: 2rem;
-  margin: 1rem 0 0 0;
-  color: #6b21a8;
-  font-weight: 700;
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
+  font-size: 1.75rem !important;
+  margin: 0 !important;
+  color: #6b21a8 !important;
+  font-weight: 700 !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.75rem !important;
+  flex: 1;
   justify-content: center;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+.meus-pedidos-header h1 svg {
+  color: #6b21a8 !important;
+  opacity: 1 !important;
 }
 
 .btn-voltar {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.625rem 1.25rem;
-  background: transparent;
-  border: 1.5px solid #9333ea;
-  color: #9333ea;
-  border-radius: 0.625rem;
-  font-size: 0.9rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 0.35rem !important;
+  padding: 0.5rem 1rem !important;
+  background: linear-gradient(135deg, #9333ea 0%, #7c3aed 100%) !important;
+  color: #ffffff !important;
+  border: none !important;
+  border-radius: 0.5rem !important;
+  font-size: 0.85rem !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  transition: all 0.3s ease !important;
+  white-space: nowrap !important;
+  box-shadow: 0 2px 8px rgba(147, 51, 234, 0.25) !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+.btn-voltar svg {
+  width: 16px !important;
+  height: 16px !important;
+  color: #ffffff !important;
+  opacity: 1 !important;
 }
 
 .btn-voltar:hover {
-  background: #9333ea;
-  color: white;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(147, 51, 234, 0.2);
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 12px rgba(147, 51, 234, 0.35) !important;
+  background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%) !important;
+}
+
+/* Indicador de Realtime */
+.realtime-indicator {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+  color: #ffffff !important;
+  padding: 6px 14px !important;
+  border-radius: 20px !important;
+  font-size: 0.75rem !important;
+  font-weight: 600 !important;
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3) !important;
+  white-space: nowrap !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+.realtime-dot {
+  width: 8px !important;
+  height: 8px !important;
+  background: white !important;
+  border-radius: 50% !important;
+  animation: pulseDot 2s ease-in-out infinite !important;
+  opacity: 1 !important;
+}
+
+@keyframes pulseDot {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(1.2);
+  }
 }
 
 .btn-voltar:active {
@@ -160,6 +218,54 @@
   transition: all 0.3s ease;
   position: relative;
   overflow: hidden;
+}
+
+/* Badge de atualização em tempo real */
+.badge-atualizado {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+  animation: pulseGreen 2s ease-in-out infinite;
+  z-index: 10;
+}
+
+@keyframes pulseGreen {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+  }
+  50% {
+    transform: scale(1.05);
+    box-shadow: 0 6px 20px rgba(16, 185, 129, 0.6);
+  }
+}
+
+/* Destaque visual para pedido atualizado */
+.pedido-card.pedido-atualizado {
+  animation: highlightCard 3s ease-out;
+  border: 2px solid #10b981;
+  box-shadow: 0 8px 24px rgba(16, 185, 129, 0.25);
+}
+
+@keyframes highlightCard {
+  0% {
+    background-color: #d1fae5;
+    transform: scale(1.02);
+  }
+  100% {
+    background-color: white;
+    transform: scale(1);
+  }
 }
 
 .pedido-card::before {
@@ -422,57 +528,189 @@
 @media (max-width: 768px) {
   .meus-pedidos-wrapper {
     padding: 0;
+    background: linear-gradient(135deg, #faf5ff 0%, #ffffff 100%);
   }
 
   .meus-pedidos-header {
-    padding: 1rem;
+    padding: 0.875rem 1rem !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    gap: 0.75rem !important;
+    justify-content: space-between !important;
+  }
+
+  .btn-voltar {
+    order: 1;
+    padding: 0.5rem 0.875rem !important;
+    font-size: 0.8rem !important;
+    gap: 0.25rem !important;
+    flex-shrink: 0;
+  }
+
+  .btn-voltar svg {
+    width: 14px !important;
+    height: 14px !important;
   }
 
   .meus-pedidos-header h1 {
-    font-size: 1.5rem;
+    order: 2;
+    font-size: 1.25rem !important;
+    flex: 1;
+    justify-content: center !important;
+    gap: 0.5rem !important;
+    min-width: 0;
+  }
+
+  .meus-pedidos-header h1 svg {
+    width: 24px !important;
+    height: 24px !important;
+  }
+
+  .realtime-indicator {
+    order: 3;
+    font-size: 0.65rem !important;
+    padding: 4px 8px !important;
+    gap: 4px !important;
+    flex-shrink: 0;
+  }
+
+  .realtime-dot {
+    width: 6px !important;
+    height: 6px !important;
   }
 
   .meus-pedidos-container {
-    padding: 1rem;
+    padding: 0.875rem !important;
   }
 
   .filtros-container {
-    flex-direction: column;
-    padding: 1rem;
+    flex-direction: column !important;
+    padding: 0.875rem !important;
+    gap: 0.75rem !important;
   }
   
   .filtro-status, .filtro-busca {
-    min-width: auto;
-    width: 100%;
+    min-width: 100% !important;
+    width: 100% !important;
+  }
+
+  .filtro-select,
+  .filtro-input {
+    font-size: 0.9rem !important;
+    padding: 0.75rem !important;
   }
   
   .pedidos-list {
-    grid-template-columns: 1fr;
-    gap: 1rem;
+    grid-template-columns: 1fr !important;
+    gap: 0.875rem !important;
   }
   
   .pedido-card {
-    padding: 1rem;
+    padding: 1rem !important;
+    border-radius: 0.75rem !important;
+  }
+
+  .pedido-card::before {
+    height: 3px !important;
   }
 
   .pedido-info {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.25rem;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 0.25rem !important;
+    font-size: 0.9rem !important;
   }
 
   .pedido-info strong {
-    min-width: auto;
+    min-width: auto !important;
+    font-size: 0.875rem !important;
+  }
+
+  .complementos-lista,
+  .toppings-lista {
+    font-size: 0.875rem !important;
+  }
+
+  .btn-avaliar {
+    width: 100% !important;
+    padding: 0.75rem !important;
+    font-size: 0.9rem !important;
+  }
+
+  .badge-atualizado {
+    top: 8px !important;
+    right: 8px !important;
+    padding: 4px 10px !important;
+    font-size: 0.7rem !important;
   }
 }
 
 @media (max-width: 480px) {
-  .btn-voltar span {
-    display: none;
+  .meus-pedidos-header {
+    padding: 0.75rem 0.875rem !important;
+  }
+
+  .btn-voltar {
+    padding: 0.5rem 0.75rem !important;
+    font-size: 0.75rem !important;
+  }
+
+  .btn-voltar svg {
+    width: 12px !important;
+    height: 12px !important;
   }
 
   .meus-pedidos-header h1 {
-    font-size: 1.25rem;
+    font-size: 1.1rem !important;
+    gap: 0.35rem !important;
+  }
+
+  .meus-pedidos-header h1 svg {
+    width: 20px !important;
+    height: 20px !important;
+  }
+
+  .realtime-indicator {
+    font-size: 0.6rem !important;
+    padding: 3px 6px !important;
+  }
+
+  .realtime-indicator span:not(.realtime-dot) {
+    display: none;
+  }
+
+  .meus-pedidos-container {
+    padding: 0.75rem !important;
+  }
+
+  .filtros-container {
+    padding: 0.75rem !important;
+  }
+
+  .pedido-card {
+    padding: 0.875rem !important;
+  }
+
+  .pedido-info {
+    font-size: 0.85rem !important;
+  }
+
+  .filtro-label {
+    font-size: 0.875rem !important;
+  }
+}
+
+@media (max-width: 360px) {
+  .meus-pedidos-header h1 {
+    font-size: 1rem !important;
+  }
+
+  .btn-voltar {
+    padding: 0.4rem 0.6rem !important;
+  }
+
+  .realtime-indicator {
+    padding: 2px 5px !important;
   }
 
   .total-pedido {
