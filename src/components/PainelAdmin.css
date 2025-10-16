@@ -910,6 +910,8 @@
 @media (max-width: 768px) {
   .painel-admin-header {
     padding: 1rem;
+    position: sticky;
+    top: 0;
   }
 
   .header-content {
@@ -929,7 +931,9 @@
 
   .header-actions {
     width: 100%;
-    justify-content: flex-end;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    gap: 0.5rem;
   }
 
   .painel-admin-container {
@@ -940,54 +944,319 @@
     flex-direction: row;
   }
 
+  .dashboard-resumo {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
   .filtros-container {
     padding: 1rem;
+    gap: 0.5rem;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .filtros-container::-webkit-scrollbar {
+    display: none;
   }
 
   .filtro-btn {
     font-size: 0.8rem;
     padding: 0.5rem 1rem;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .busca-filtros-container {
+    flex-direction: column;
+    gap: 0.75rem;
+    margin: 1rem 0;
+  }
+
+  .busca-wrapper {
+    max-width: 100%;
+    width: 100%;
+  }
+
+  .busca-input {
+    padding: 10px 40px 10px 40px;
+    font-size: 14px;
+  }
+
+  .btn-filtros-avancados {
+    width: 100%;
+    justify-content: center;
+    padding: 10px 16px;
+    font-size: 14px;
+  }
+
+  .filtros-avancados-painel {
+    grid-template-columns: 1fr;
+    padding: 1rem;
+    gap: 0.75rem;
   }
 
   .pedido-card {
     padding: 1rem;
   }
+
+  .pedido-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  .pedido-id {
+    font-size: 0.9rem;
+  }
+
+  .status-badge {
+    font-size: 0.8rem;
+    padding: 0.4rem 0.75rem;
+  }
+
+  .cliente-nome {
+    font-size: 1.1rem;
+  }
+
+  .pedido-info {
+    font-size: 0.85rem;
+  }
+
+  .action-buttons-group {
+    gap: 0.5rem;
+  }
+
+  .btn-action {
+    padding: 0.75rem 1rem;
+    font-size: 0.875rem;
+  }
+
+  .btn-print {
+    padding: 0.75rem 1rem;
+    font-size: 0.875rem;
+  }
+
+  .new-orders-badge {
+    padding: 0.5rem 1rem;
+    font-size: 0.8rem;
+  }
+
+  .badge-text {
+    display: none;
+  }
 }
 
 @media (max-width: 480px) {
+  .painel-admin-header {
+    padding: 0.875rem;
+  }
+
   .header-title {
     flex-direction: column;
     align-items: flex-start;
     gap: 0.5rem;
   }
 
+  .header-title h1 {
+    font-size: 1.25rem;
+  }
+
   .header-subtitle {
     margin-left: 0;
+    font-size: 0.75rem;
   }
 
   .header-actions {
     flex-direction: row;
     gap: 0.5rem;
+    width: 100%;
   }
 
   .btn-header {
-    padding: 0.75rem;
-    font-size: 0.85rem;
+    padding: 0.625rem 0.75rem;
+    font-size: 0.8rem;
     min-width: auto;
+    flex: 1;
   }
 
-  /* Esconder texto dos botões em telas muito pequenas */
+  /* Esconder texto dos botões em telas muito pequenas, manter apenas ícones */
   .btn-header .btn-text {
     display: none;
   }
 
-  .stat-content h2 {
+  .btn-header svg {
+    margin: 0;
+  }
+
+  .painel-admin-container {
+    padding: 0.75rem;
+  }
+
+  .dashboard-resumo {
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+  }
+
+  .stat-card {
+    padding: 1rem;
+  }
+
+  .stat-card h2 {
     font-size: 1.5rem;
   }
 
+  .stat-card p {
+    font-size: 0.8rem;
+  }
+
+  .filtros-container {
+    padding: 0.75rem;
+    gap: 0.375rem;
+  }
+
   .filtro-btn {
-    flex: 1 1 calc(50% - 0.375rem);
-    min-width: 100px;
+    font-size: 0.75rem;
+    padding: 0.5rem 0.875rem;
+    flex: 0 0 auto;
+  }
+
+  .busca-input {
+    padding: 9px 35px 9px 35px;
+    font-size: 13px;
+  }
+
+  .busca-icon,
+  .limpar-busca {
+    width: 16px;
+    height: 16px;
+  }
+
+  .btn-filtros-avancados {
+    padding: 9px 14px;
+    font-size: 13px;
+  }
+
+  .pedido-card {
+    padding: 0.875rem;
+    margin-bottom: 0.875rem;
+  }
+
+  .pedido-id {
+    font-size: 0.8rem;
+  }
+
+  .cliente-nome {
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .pedido-info {
+    font-size: 0.8rem;
+  }
+
+  .detalhes-pedido {
+    padding: 0.75rem;
+    font-size: 0.8rem;
+  }
+
+  .action-buttons-group {
+    gap: 0.5rem;
+  }
+
+  .btn-action,
+  .btn-print {
+    padding: 0.625rem 0.875rem;
+    font-size: 0.8rem;
+    gap: 0.375rem;
+  }
+
+  .btn-action svg,
+  .btn-print svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .new-orders-badge {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.75rem;
+    gap: 0.375rem;
+  }
+
+  .new-orders-badge svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  .modal-content {
+    padding: 1rem;
+    max-width: calc(100vw - 2rem);
+  }
+
+  .modal-header h3 {
+    font-size: 1rem;
+  }
+
+  .modal-body {
+    padding: 1rem;
+    font-size: 0.875rem;
+  }
+
+  .modal-actions {
+    padding: 0.75rem 1rem 1rem;
+    gap: 0.5rem;
+  }
+
+  .btn-modal {
+    padding: 0.625rem 1rem;
+    font-size: 0.8rem;
+    flex: 1;
+  }
+}
+
+/* Melhorias para touch em dispositivos móveis */
+@media (hover: none) and (pointer: coarse) {
+  .filtro-btn,
+  .btn-header,
+  .btn-action,
+  .btn-print,
+  .btn-modal,
+  .btn-filtros-avancados,
+  .limpar-busca {
+    min-height: 44px;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .filtro-btn:active,
+  .btn-header:active,
+  .btn-action:active,
+  .btn-print:active,
+  .btn-modal:active,
+  .btn-filtros-avancados:active {
+    transform: scale(0.98);
+  }
+
+  .busca-input {
+    font-size: 16px; /* Evita zoom no iOS */
+  }
+}
+
+/* Landscape em dispositivos pequenos */
+@media (max-width: 768px) and (orientation: landscape) {
+  .dashboard-resumo {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .filtros-container {
+    justify-content: flex-start;
+  }
+
+  .pedidos-list {
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 

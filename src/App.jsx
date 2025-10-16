@@ -6,6 +6,9 @@ import { ThemeProvider } from './ThemeContext';
 import NotificationProvider from './components/NotificationToast';
 import NotificationPrompt from './components/NotificationPrompt';
 
+// Mobile Optimizations
+import './components/MobileOptimizations.css';
+
 // Importação de todos os componentes de página
 import HomePage from './components/HomePage';
 import Login from './components/Login';

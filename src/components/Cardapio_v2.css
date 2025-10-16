@@ -908,6 +908,7 @@
 @media (max-width: 768px) {
   .cardapio-v2-hero {
     padding: var(--spacing-lg) var(--spacing-md);
+    min-height: auto;
   }
 
   .cardapio-v2-hero-title h2 {
@@ -918,34 +919,45 @@
     font-size: 1rem;
   }
 
+  .cardapio-v2-container {
+    padding: var(--spacing-md);
+  }
+
   .cardapio-v2-card {
     padding: var(--spacing-md);
   }
 
   .cardapio-v2-type-grid {
     grid-template-columns: 1fr;
+    gap: var(--spacing-sm);
   }
 
   .cardapio-v2-size-grid {
     grid-template-columns: 1fr;
+    gap: var(--spacing-sm);
   }
 
   .cardapio-v2-default-grid {
     grid-template-columns: 1fr;
+    gap: var(--spacing-sm);
   }
 
   .cardapio-v2-toppings-grid {
     grid-template-columns: repeat(2, 1fr);
+    gap: var(--spacing-sm);
   }
 
   .cardapio-v2-header-content {
     flex-direction: column;
     gap: var(--spacing-md);
+    align-items: stretch;
   }
 
   .cardapio-v2-header-actions {
     width: 100%;
     justify-content: space-between;
+    flex-wrap: wrap;
+    gap: var(--spacing-sm);
   }
 
   .cardapio-v2-total-row {
@@ -957,20 +969,123 @@
   .cardapio-v2-total-value-container {
     text-align: center;
   }
+
+  .cardapio-v2-section-title {
+    font-size: 1.25rem;
+  }
+
+  .cardapio-v2-btn {
+    padding: var(--spacing-sm) var(--spacing-md);
+    font-size: 0.9375rem;
+  }
+
+  .cardapio-v2-quantity {
+    width: 100%;
+    justify-content: center;
+  }
 }
 
 /* Small Mobile */
 @media (max-width: 480px) {
+  .cardapio-v2-hero {
+    padding: var(--spacing-md);
+  }
+
   .cardapio-v2-hero-title h2 {
     font-size: 1.75rem;
+  }
+
+  .cardapio-v2-hero-title p {
+    font-size: 0.9375rem;
+  }
+
+  .cardapio-v2-container {
+    padding: var(--spacing-sm);
+  }
+
+  .cardapio-v2-card {
+    padding: var(--spacing-sm);
+  }
+
+  .cardapio-v2-section-title {
+    font-size: 1.125rem;
   }
 
   .cardapio-v2-toppings-grid {
     grid-template-columns: 1fr;
   }
 
+  .cardapio-v2-type-card,
+  .cardapio-v2-size-card {
+    padding: var(--spacing-sm);
+  }
+
+  .cardapio-v2-type-icon,
+  .cardapio-v2-size-icon {
+    font-size: 2rem;
+    margin-bottom: var(--spacing-xs);
+  }
+
   .cardapio-v2-quantity {
     justify-content: center;
+  }
+
+  .cardapio-v2-btn {
+    padding: var(--spacing-sm);
+    font-size: 0.875rem;
+  }
+
+  .cardapio-v2-total-label {
+    font-size: 1rem;
+  }
+
+  .cardapio-v2-total-value {
+    font-size: 1.75rem;
+  }
+
+  .cardapio-v2-total-details {
+    font-size: 0.8125rem;
+  }
+}
+
+/* Melhorias para touch em dispositivos móveis */
+@media (hover: none) and (pointer: coarse) {
+  .cardapio-v2-type-card,
+  .cardapio-v2-size-card,
+  .cardapio-v2-default-item,
+  .cardapio-v2-topping-card,
+  .cardapio-v2-btn,
+  .cardapio-v2-quantity button {
+    min-height: 44px;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .cardapio-v2-type-card:active,
+  .cardapio-v2-size-card:active,
+  .cardapio-v2-default-item:active,
+  .cardapio-v2-topping-card:active {
+    transform: scale(0.98);
+  }
+
+  input[type="text"],
+  textarea {
+    font-size: 16px; /* Evita zoom no iOS */
+  }
+}
+
+/* Landscape em dispositivos pequenos */
+@media (max-width: 768px) and (orientation: landscape) {
+  .cardapio-v2-type-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .cardapio-v2-size-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .cardapio-v2-toppings-grid {
+    grid-template-columns: repeat(3, 1fr);
   }
 }
 

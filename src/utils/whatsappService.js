@@ -2,18 +2,13 @@
 
 /**
  * Serviço para envio automático de mensagens WhatsApp
- * Integração com Evolution API ou Twilio
+ * Integração com Baileys API Local
  */
 
 // Configuração
 const WHATSAPP_CONFIG = {
-  provider: import.meta.env.VITE_WHATSAPP_PROVIDER || 'evolution', // 'evolution' ou 'twilio'
-  evolutionApiUrl: import.meta.env.VITE_EVOLUTION_API_URL,
-  evolutionApiKey: import.meta.env.VITE_EVOLUTION_API_KEY,
-  evolutionInstance: import.meta.env.VITE_EVOLUTION_INSTANCE,
-  twilioAccountSid: import.meta.env.VITE_TWILIO_ACCOUNT_SID,
-  twilioAuthToken: import.meta.env.VITE_TWILIO_AUTH_TOKEN,
-  twilioPhoneNumber: import.meta.env.VITE_TWILIO_PHONE_NUMBER,
+  provider: import.meta.env.VITE_WHATSAPP_PROVIDER || 'baileys',
+  baileysApiUrl: import.meta.env.VITE_BAILEYS_API_URL || 'http://localhost:3001',
   lojaNome: import.meta.env.VITE_MERCHANT_NAME || 'Tiadê Açaiteria',
 }
 
@@ -143,70 +138,34 @@ export function generateReviewReminderMessage(order) {
 }
 
 /**
- * Envia mensagem via Evolution API
+ * Envia mensagem via Baileys API Local
  */
-async function sendViaEvolution(phone, message) {
-  const url = `${WHATSAPP_CONFIG.evolutionApiUrl}/message/sendText/${WHATSAPP_CONFIG.evolutionInstance}`
+async function sendViaBaileys(phone, message) {
+  const url = `${WHATSAPP_CONFIG.baileysApiUrl}/send-message`
   
   try {
     const response = await fetch(url, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'apikey': WHATSAPP_CONFIG.evolutionApiKey,
       },
       body: JSON.stringify({
-        number: formatPhoneNumber(phone),
-        text: message,
+        to: phone,
+        message: message,
       }),
     })
     
     if (!response.ok) {
-      const error = await response.text()
-      throw new Error(`Evolution API error: ${error}`)
+      const error = await response.json()
+      throw new Error(error.message || 'Erro ao enviar mensagem')
     }
     
     const data = await response.json()
-    console.log('✅ WhatsApp enviado via Evolution:', data)
+    console.log('✅ WhatsApp enviado via Baileys:', data)
     return { success: true, data }
     
   } catch (error) {
-    console.error('❌ Erro ao enviar WhatsApp via Evolution:', error)
-    return { success: false, error: error.message }
-  }
-}
-
-/**
- * Envia mensagem via Twilio
- */
-async function sendViaTwilio(phone, message) {
-  const url = `https://api.twilio.com/2010-04-01/Accounts/${WHATSAPP_CONFIG.twilioAccountSid}/Messages.json`
-  
-  try {
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-        'Authorization': `Basic ${btoa(`${WHATSAPP_CONFIG.twilioAccountSid}:${WHATSAPP_CONFIG.twilioAuthToken}`)}`,
-      },
-      body: new URLSearchParams({
-        From: `whatsapp:${WHATSAPP_CONFIG.twilioPhoneNumber}`,
-        To: `whatsapp:+${phone.replace(/\D/g, '')}`,
-        Body: message,
-      }),
-    })
-    
-    if (!response.ok) {
-      const error = await response.text()
-      throw new Error(`Twilio API error: ${error}`)
-    }
-    
-    const data = await response.json()
-    console.log('✅ WhatsApp enviado via Twilio:', data)
-    return { success: true, data }
-    
-  } catch (error) {
-    console.error('❌ Erro ao enviar WhatsApp via Twilio:', error)
+    console.error('❌ Erro ao enviar WhatsApp via Baileys:', error)
     return { success: false, error: error.message }
   }
 }
@@ -219,17 +178,12 @@ async function sendViaTwilio(phone, message) {
  */
 export async function sendWhatsAppMessage(phone, message) {
   // Verificar se está configurado
-  if (!WHATSAPP_CONFIG.evolutionApiUrl && !WHATSAPP_CONFIG.twilioAccountSid) {
-    console.warn('⚠️ WhatsApp não configurado. Mensagem não enviada.')
+  if (!WHATSAPP_CONFIG.baileysApiUrl) {
+    console.warn('⚠️ WhatsApp Baileys não configurado. Mensagem não enviada.')
     return { success: false, error: 'WhatsApp não configurado' }
   }
   
-  // Escolher provedor
-  if (WHATSAPP_CONFIG.provider === 'twilio') {
-    return await sendViaTwilio(phone, message)
-  } else {
-    return await sendViaEvolution(phone, message)
-  }
+  return await sendViaBaileys(phone, message)
 }
 
 /**
@@ -287,8 +241,33 @@ export async function sendReviewReminder(order) {
  * Verifica se WhatsApp está configurado
  */
 export function isWhatsAppConfigured() {
-  return !!(
-    (WHATSAPP_CONFIG.evolutionApiUrl && WHATSAPP_CONFIG.evolutionApiKey) ||
-    (WHATSAPP_CONFIG.twilioAccountSid && WHATSAPP_CONFIG.twilioAuthToken)
-  )
+  return !!WHATSAPP_CONFIG.baileysApiUrl
+}
+
+/**
+ * Verifica status da conexão WhatsApp
+ */
+export async function checkWhatsAppStatus() {
+  try {
+    const response = await fetch(`${WHATSAPP_CONFIG.baileysApiUrl}/status`)
+    const data = await response.json()
+    return data
+  } catch (error) {
+    console.error('❌ Erro ao verificar status WhatsApp:', error)
+    return { connected: false, status: 'error' }
+  }
+}
+
+/**
+ * Obtém QR Code para conexão
+ */
+export async function getWhatsAppQRCode() {
+  try {
+    const response = await fetch(`${WHATSAPP_CONFIG.baileysApiUrl}/qr`)
+    const data = await response.json()
+    return data
+  } catch (error) {
+    console.error('❌ Erro ao obter QR Code:', error)
+    return { success: false, message: error.message }
+  }
 }

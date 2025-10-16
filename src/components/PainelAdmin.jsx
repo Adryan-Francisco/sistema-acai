@@ -9,6 +9,7 @@ import { sendStatusUpdate, sendReviewReminder, isWhatsAppConfigured } from '../u
 import { notifyOrderStatusChange } from '../utils/pushNotifications';
 import { formatDate, formatTime } from '../utils/dateUtils';
 import ThemeToggle from './ThemeToggle';
+import WhatsAppConnection from './WhatsAppConnection';
 import './PainelAdmin.css';
 
 function PainelAdmin() {
@@ -723,6 +724,9 @@ function PainelAdmin() {
           {adminMessage.text}
         </div>
       )}
+      
+      {/* Conexão WhatsApp */}
+      <WhatsAppConnection />
       
       {/* Dashboard de Resumo do Dia */}
       <div className="dashboard-resumo">
