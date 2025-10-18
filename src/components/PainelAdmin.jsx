@@ -432,7 +432,7 @@ function PainelAdmin() {
           await sendStatusUpdate(upd[0], novoStatus)
           console.log('✅ WhatsApp de atualização enviado')
           
-          // Se foi marcado como "Entregue", enviar lembrete de avaliação após 5 minutos
+          // Se foi marcado como "Entregue", enviar lembrete de avaliação após 10 segundos (para testes)
           if (novoStatus === 'Entregue') {
             setTimeout(async () => {
               try {
@@ -441,7 +441,7 @@ function PainelAdmin() {
               } catch (err) {
                 console.error('❌ Erro ao enviar lembrete de avaliação:', err)
               }
-            }, 5 * 60 * 1000) // 5 minutos
+            }, 10 * 1000) // 10 segundos para testes (depois mudar para 5 * 60 * 1000 em produção)
           }
         } catch (whatsappError) {
           console.error('❌ Erro ao enviar WhatsApp:', whatsappError)
