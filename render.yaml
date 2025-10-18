@@ -3,8 +3,10 @@ services:
     name: sistema-acai-server
     runtime: node
     plan: free
-    buildCommand: cd server && npm install
-    startCommand: cd server && npm start
+    buildCommand: chmod +x build.sh && ./build.sh
+    startCommand: node server/server.js
     envVars:
       - key: NODE_ENV
         value: production
+      - key: PORT
+        value: 3001
