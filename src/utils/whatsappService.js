@@ -33,36 +33,52 @@ export function formatPhoneNumber(phone) {
 export function generateOrderConfirmationMessage(order) {
   const { detalhes_pedido, nome_cliente, id } = order
   
-  let message = `🎉 *Pedido Confirmado!*\n\n`
-  message += `Olá *${nome_cliente}*! Seu pedido foi recebido com sucesso.\n\n`
-  message += `📋 *Detalhes do Pedido #${id}*\n`
-  message += `━━━━━━━━━━━━━━━━\n`
-  message += `🍨 ${detalhes_pedido.tipo_acai} - ${detalhes_pedido.tamanho}\n`
+  let message = `🎉 *Pedido Confirmado com Sucesso!*\n`
+  message += `━━━━━━━━━━━━━━━━━━━━━\n\n`
+  message += `Olá *${nome_cliente}*! 👋\n`
+  message += `Seu pedido foi recebido com sucesso!\n\n`
+  message += `📋 *Pedido #${id}*\n`
+  message += `━━━━━━━━━━━━━━━━━━━━━\n`
+  message += `🍨 *${detalhes_pedido.tipo_acai}*\n`
+  message += `📏 Tamanho: ${detalhes_pedido.tamanho}\n\n`
   
   if (detalhes_pedido.complementos_padrao?.length > 0) {
-    message += `\n✅ *Incluso:*\n${detalhes_pedido.complementos_padrao.map(c => `• ${c}`).join('\n')}\n`
+    message += `✅ *Incluso:*\n`
+    detalhes_pedido.complementos_padrao.forEach(c => {
+      message += `  • ${c}\n`
+    })
+    message += `\n`
   }
   
   if (detalhes_pedido.complementos_removidos?.length > 0) {
-    message += `\n❌ *Removidos:*\n${detalhes_pedido.complementos_removidos.map(c => `• ${c}`).join('\n')}\n`
+    message += `❌ *Removidos:*\n`
+    detalhes_pedido.complementos_removidos.forEach(c => {
+      message += `  • ${c}\n`
+    })
+    message += `\n`
   }
   
   if (detalhes_pedido.complementos_adicionais?.length > 0) {
-    message += `\n➕ *Adicionais:*\n${detalhes_pedido.complementos_adicionais.map(c => `• ${c.nome} (+R$ ${c.preco.toFixed(2)})`).join('\n')}\n`
+    message += `➕ *Adicionais:*\n`
+    detalhes_pedido.complementos_adicionais.forEach(c => {
+      message += `  • ${c.nome} (+R$ ${c.preco.toFixed(2)})\n`
+    })
+    message += `\n`
   }
   
-  message += `\n━━━━━━━━━━━━━━━━\n`
+  message += `━━━━━━━━━━━━━━━━━━━━━\n`
   message += `💰 *Total:* R$ ${detalhes_pedido.total}\n`
   message += `💳 *Pagamento:* ${detalhes_pedido.metodo_pagamento}\n`
   
   if (detalhes_pedido.tipo_entrega === 'entrega') {
-    message += `🛵 *Entrega para:* ${detalhes_pedido.endereco_entrega}\n`
+    message += `🛵 *Entrega para:*\n   ${detalhes_pedido.endereco_entrega}\n`
     message += `📦 *Taxa de Entrega:* R$ ${detalhes_pedido.taxa_entrega.toFixed(2)}\n`
   } else {
     message += `🏪 *Tipo:* Retirada no Local\n`
   }
   
-  message += `⏱️ *Tempo Estimado:* ${detalhes_pedido.tempo_preparo}\n\n`
+  message += `⏱️ *Tempo Estimado:* ${detalhes_pedido.tempo_preparo}\n`
+  message += `━━━━━━━━━━━━━━━━━━━━━\n\n`
   message += `Estamos preparando seu açaí com muito carinho! ❤️\n\n`
   message += `_${WHATSAPP_CONFIG.lojaNome}_`
   
@@ -73,7 +89,7 @@ export function generateOrderConfirmationMessage(order) {
  * Gera mensagem de atualização de status
  */
 export function generateStatusUpdateMessage(order, newStatus) {
-  const { nome_cliente, id } = order
+  const { nome_cliente, id, detalhes_pedido } = order
   
   let emoji = '📦'
   let statusText = ''
@@ -83,17 +99,17 @@ export function generateStatusUpdateMessage(order, newStatus) {
     case 'Em Preparo':
       emoji = '👨‍🍳'
       statusText = 'Em Preparo'
-      description = 'Estamos preparando seu açaí agora!'
+      description = 'Estamos preparando seu açaí com muito carinho agora!'
       break
     case 'Pronto':
       emoji = '✅'
       statusText = 'Pronto para Retirada/Entrega'
-      description = 'Seu açaí está prontinho! 🎉'
+      description = 'Seu açaí está prontinho e delicioso! 🎉'
       break
     case 'Saiu para Entrega':
       emoji = '🛵'
       statusText = 'Saiu para Entrega'
-      description = 'O entregador está a caminho!'
+      description = 'O entregador está a caminho com seu pedido!'
       break
     case 'Entregue':
       emoji = '🎊'
@@ -111,10 +127,19 @@ export function generateStatusUpdateMessage(order, newStatus) {
       description = 'Status do pedido atualizado.'
   }
   
-  let message = `${emoji} *Atualização do Pedido #${id}*\n\n`
-  message += `Olá *${nome_cliente}*!\n\n`
+  let message = `${emoji} *Atualização do Pedido #${id}*\n`
+  message += `━━━━━━━━━━━━━━━━━━━━━\n\n`
+  message += `Olá *${nome_cliente}*! 👋\n\n`
   message += `📊 *Novo Status:* ${statusText}\n`
   message += `${description}\n\n`
+  
+  if (detalhes_pedido) {
+    message += `📋 *Detalhes:*\n`
+    message += `• ${detalhes_pedido.tipo_acai} (${detalhes_pedido.tamanho})\n`
+    message += `• Total: R$ ${detalhes_pedido.total}\n\n`
+  }
+  
+  message += `━━━━━━━━━━━━━━━━━━━━━\n`
   message += `_${WHATSAPP_CONFIG.lojaNome}_`
   
   return message
@@ -126,12 +151,15 @@ export function generateStatusUpdateMessage(order, newStatus) {
 export function generateReviewReminderMessage(order) {
   const { nome_cliente, id } = order
   
-  let message = `⭐ *Avalie seu Pedido*\n\n`
-  message += `Olá *${nome_cliente}*!\n\n`
-  message += `Esperamos que tenha gostado do seu açaí! 😊\n\n`
-  message += `Sua opinião é muito importante para nós.\n`
+  let message = `⭐ *Deixe sua Avaliação!*\n`
+  message += `━━━━━━━━━━━━━━━━━━━━━\n\n`
+  message += `Olá *${nome_cliente}*! 👋\n\n`
+  message += `Esperamos que tenha gostado do seu açaí! 😊\n`
+  message += `Sua opinião é *muito importante* para nós.\n\n`
   message += `Que tal avaliar seu pedido #${id}?\n\n`
-  message += `Acesse nosso sistema e deixe sua avaliação! ⭐⭐⭐⭐⭐\n\n`
+  message += `⭐⭐⭐⭐⭐ Acesse nosso sistema e deixe sua avaliação!\n\n`
+  message += `━━━━━━━━━━━━━━━━━━━━━\n`
+  message += `Queremos sempre melhorar para você! ❤️\n\n`
   message += `_${WHATSAPP_CONFIG.lojaNome}_`
   
   return message
