@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Package, Star, Bell } from 'lucide-react';
+import { ArrowLeft, Package, Star, Bell, CreditCard, Printer } from 'lucide-react';
 import { supabase, isSupabaseConfigured } from '../supabaseClient.js';
 import { useAuth } from '../AuthContext.jsx';
 import { formatDate, formatTime } from '../utils/dateUtils.js';
 import { useNotification } from './NotificationToast.jsx';
 import { playNotificationSound } from '../utils/notificationSound.js';
+import { printReceipt } from '../utils/printReceipt.js';
 import AvaliarPedido from './AvaliarPedido';
+import PixPayment from './PixPayment';
 import './MeusPedidos.css';
 
 function MeusPedidos() {
@@ -19,6 +21,8 @@ function MeusPedidos() {
   const [buscaTexto, setBuscaTexto] = useState('');
   const [pedidoParaAvaliar, setPedidoParaAvaliar] = useState(null);
   const [pedidoAtualizado, setPedidoAtualizado] = useState(null);
+  const [pedidoParaPagar, setPedidoParaPagar] = useState(null);
+  const [showPixModal, setShowPixModal] = useState(false);
   const { user, session } = useAuth();
 
   useEffect(() => {
@@ -325,6 +329,38 @@ function MeusPedidos() {
                   <strong>Status:</strong> <span className="status-text">{pedido.status}</span>
                 </p>
 
+                {/* Badge de Pagamento Confirmado */}
+                {pedido.payment_status === 'paid' && (
+                  <div className="badge-pagamento-confirmado">
+                    <CreditCard size={16} />
+                    Pagamento Confirmado ✓
+                  </div>
+                )}
+
+                {/* Botão Pagar Agora */}
+                {pedido.status === 'Aguardando Pagamento' && (
+                  <button 
+                    className="btn-pagar-agora"
+                    onClick={() => {
+                      setPedidoParaPagar(pedido);
+                      setShowPixModal(true);
+                    }}
+                  >
+                    <CreditCard size={18} />
+                    Pagar Agora
+                  </button>
+                )}
+
+                {/* Botão de Impressão */}
+                <button 
+                  className="btn-imprimir"
+                  onClick={() => printReceipt(pedido)}
+                  title="Imprimir cupom fiscal"
+                >
+                  <Printer size={18} />
+                  Imprimir Cupom
+                </button>
+
                 {/* Botão de Avaliar */}
                 {pedido.status === 'Concluído' && !pedido.avaliado && (
                   <button 
@@ -364,6 +400,44 @@ function MeusPedidos() {
               setPedidosFiltrados(data || []);
             };
             fetchPedidos();
+          }}
+        />
+      )}
+
+      {/* Modal de PIX para Pagar Agora */}
+      {showPixModal && pedidoParaPagar && (
+        <PixPayment
+          amount={parseFloat(pedidoParaPagar.detalhes_pedido?.total || 0)}
+          orderId={pedidoParaPagar.id}
+          onPaymentConfirmed={() => {
+            supabase
+              .from('pedidos')
+              .update({ 
+                status: 'Recebido',
+                payment_status: 'paid',
+                payment_confirmed_at: new Date().toISOString()
+              })
+              .eq('id', pedidoParaPagar.id)
+              .then(() => {
+                success('✅ Pagamento realizado com sucesso! Seu pedido está sendo preparado.');
+                setShowPixModal(false);
+                setPedidoParaPagar(null);
+                // Recarregar pedidos
+                const fetchPedidos = async () => {
+                  const { data } = await supabase
+                    .from('pedidos')
+                    .select('*')
+                    .eq('user_id', user.id)
+                    .order('created_at', { ascending: false });
+                  setPedidos(data || []);
+                  setPedidosFiltrados(data || []);
+                };
+                fetchPedidos();
+              });
+          }}
+          onClose={() => {
+            setShowPixModal(false);
+            setPedidoParaPagar(null);
           }}
         />
       )}

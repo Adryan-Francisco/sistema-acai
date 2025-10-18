@@ -199,8 +199,53 @@
   text-align: center;
 }
 
+.whatsapp-error.loading-state {
+  background: #fef3c7;
+  border-color: #fde68a;
+  color: #92400e;
+}
+
 .whatsapp-error p {
   margin: 0 0 1rem 0;
+  font-weight: 500;
+}
+
+.whatsapp-error.loading-state p {
+  margin-top: 0.5rem;
+}
+
+.loading-spinner {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 0.75rem;
+}
+
+.loading-spinner .spin {
+  color: #f59e0b;
+}
+
+.loading-tip {
+  margin-top: 1rem;
+  padding: 0.875rem;
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 0.5rem;
+  text-align: left;
+}
+
+.loading-tip p {
+  margin: 0.5rem 0;
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+.loading-tip p:first-child {
+  margin-top: 0;
+}
+
+.loading-tip p:last-child {
+  margin-bottom: 0;
+  font-size: 0.8125rem;
+  color: #78716c;
 }
 
 /* Connected Info */

@@ -10,6 +10,7 @@ import { notifyOrderStatusChange } from '../utils/pushNotifications';
 import { formatDate, formatTime } from '../utils/dateUtils';
 import ThemeToggle from './ThemeToggle';
 import WhatsAppConnection from './WhatsAppConnection';
+import DebugWhatsApp from './DebugWhatsApp';
 import './PainelAdmin.css';
 
 function PainelAdmin() {
@@ -21,6 +22,7 @@ function PainelAdmin() {
   const [filtroStatus, setFiltroStatus] = useState('ativos');
   const [adminMessage, setAdminMessage] = useState(null);
   const [newOrdersCount, setNewOrdersCount] = useState(0);
+  const [showDebug, setShowDebug] = useState(false);
   
   // Novos estados para busca e filtros
   const [buscaCliente, setBuscaCliente] = useState('');
@@ -727,6 +729,18 @@ function PainelAdmin() {
       
       {/* Conexão WhatsApp */}
       <WhatsAppConnection />
+
+      {/* Debug WhatsApp (apenas em desenvolvimento) */}
+      {showDebug && <DebugWhatsApp />}
+      
+      {/* Botão para abrir/fechar Debug */}
+      <button 
+        className="btn-debug"
+        onClick={() => setShowDebug(!showDebug)}
+        title="Abrir diagnóstico do WhatsApp"
+      >
+        🔧 {showDebug ? 'Fechar' : 'Abrir'} Diagnóstico
+      </button>
       
       {/* Dashboard de Resumo do Dia */}
       <div className="dashboard-resumo">

@@ -249,12 +249,26 @@ export function isWhatsAppConfigured() {
  */
 export async function checkWhatsAppStatus() {
   try {
-    const response = await fetch(`${WHATSAPP_CONFIG.baileysApiUrl}/status`)
+    const response = await fetch(`${WHATSAPP_CONFIG.baileysApiUrl}/status`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+    
+    if (!response.ok) {
+      throw new Error(`Erro HTTP: ${response.status}`)
+    }
+    
     const data = await response.json()
     return data
   } catch (error) {
     console.error('❌ Erro ao verificar status WhatsApp:', error)
-    return { connected: false, status: 'error' }
+    return { 
+      connected: false, 
+      status: 'error',
+      message: error.message 
+    }
   }
 }
 
@@ -263,11 +277,24 @@ export async function checkWhatsAppStatus() {
  */
 export async function getWhatsAppQRCode() {
   try {
-    const response = await fetch(`${WHATSAPP_CONFIG.baileysApiUrl}/qr`)
+    const response = await fetch(`${WHATSAPP_CONFIG.baileysApiUrl}/qr`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+    
+    if (!response.ok) {
+      throw new Error(`Erro HTTP: ${response.status}`)
+    }
+    
     const data = await response.json()
     return data
   } catch (error) {
     console.error('❌ Erro ao obter QR Code:', error)
-    return { success: false, message: error.message }
+    return { 
+      success: false, 
+      message: error.message || 'Erro ao conectar com o servidor WhatsApp. Verifique se está rodando em http://localhost:3001' 
+    }
   }
 }

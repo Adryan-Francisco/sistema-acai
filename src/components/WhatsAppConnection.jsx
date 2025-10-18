@@ -14,6 +14,36 @@ export default function WhatsAppConnection() {
   const [qrCode, setQrCode] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [retryCount, setRetryCount] = useState(0);
+
+  // Função para buscar QR Code
+  const fetchQRCode = async () => {
+    try {
+      setRetryCount(prev => prev + 1);
+      setError(`⏳ Gerando QR Code do WhatsApp... (tentativa ${retryCount + 1})`);
+      const qrData = await getWhatsAppQRCode();
+      
+      if (qrData.success && qrData.qrCode) {
+        setQrCode(qrData.qrCode);
+        setError(null);
+        setRetryCount(0);
+      } else if (qrData.message) {
+        // Mensagens mais amigáveis
+        if (qrData.message.includes('ainda não foi gerado')) {
+          const timeEstimate = retryCount < 2 ? '5-10 segundos' : '15-20 segundos';
+          setError(`⏳ O WhatsApp está gerando o QR Code. Aguarde ${timeEstimate}...`);
+        } else if (qrData.message.includes('já está conectado')) {
+          setError(null);
+          setRetryCount(0);
+        } else {
+          setError(qrData.message);
+        }
+      }
+    } catch (err) {
+      console.error('Erro ao buscar QR Code:', err);
+      setError('❌ Erro ao obter QR Code. Verifique se o servidor WhatsApp está rodando.');
+    }
+  };
 
   // Função para verificar status
   const fetchStatus = async () => {
@@ -23,32 +53,19 @@ export default function WhatsAppConnection() {
       
       // Se não está conectado e não tem QR, buscar QR
       if (!statusData.connected && statusData.status !== 'connected') {
-        await fetchQRCode();
+        if (!qrCode) {
+          await fetchQRCode();
+        }
       } else if (statusData.connected) {
         setQrCode(null); // Limpar QR se já conectado
+        setError(null);
+        setRetryCount(0);
       }
     } catch (err) {
       console.error('Erro ao verificar status:', err);
-      setError('Erro ao conectar com servidor WhatsApp');
+      setError('Erro ao conectar com servidor WhatsApp. Verifique se o servidor está rodando.');
     } finally {
       setLoading(false);
-    }
-  };
-
-  // Função para buscar QR Code
-  const fetchQRCode = async () => {
-    try {
-      const qrData = await getWhatsAppQRCode();
-      
-      if (qrData.success && qrData.qrCode) {
-        setQrCode(qrData.qrCode);
-        setError(null);
-      } else if (qrData.message) {
-        setError(qrData.message);
-      }
-    } catch (err) {
-      console.error('Erro ao buscar QR Code:', err);
-      setError('Erro ao obter QR Code');
     }
   };
 
@@ -56,11 +73,24 @@ export default function WhatsAppConnection() {
   useEffect(() => {
     fetchStatus();
     
-    // Atualizar status a cada 5 segundos
-    const interval = setInterval(fetchStatus, 5000);
+    // Atualizar status periodicamente
+    let interval;
     
-    return () => clearInterval(interval);
-  }, []);
+    if (!status.connected && !qrCode) {
+      // Se não conectado e sem QR, atualiza a cada 3 segundos
+      interval = setInterval(fetchStatus, 3000);
+    } else if (status.connected) {
+      // Se conectado, atualiza a cada 10 segundos (apenas monitoramento)
+      interval = setInterval(fetchStatus, 10000);
+    } else {
+      // Se tem QR mas não conectou, atualiza a cada 5 segundos
+      interval = setInterval(fetchStatus, 5000);
+    }
+    
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [status.connected, qrCode]);
 
   // Renderizar status
   const renderStatus = () => {
@@ -170,17 +200,30 @@ export default function WhatsAppConnection() {
         </div>
       )}
 
-      {/* Erro */}
+      {/* Erro ou Aguardando */}
       {error && !qrCode && (
-        <div className="whatsapp-error">
+        <div className={`whatsapp-error ${error.includes('⏳') ? 'loading-state' : ''}`}>
+          {error.includes('⏳') && (
+            <div className="loading-spinner">
+              <Loader size={24} className="spin" />
+            </div>
+          )}
           <p>{error}</p>
-          <button 
-            className="btn-retry"
-            onClick={fetchStatus}
-          >
-            <RefreshCw size={16} />
-            Tentar Novamente
-          </button>
+          {error.includes('⏳') && (
+            <div className="loading-tip">
+              <p>💡 <strong>Dica:</strong> O QR Code geralmente leva de 5 a 15 segundos para ser gerado na primeira vez.</p>
+              <p>O componente tentará buscar automaticamente a cada 3 segundos.</p>
+            </div>
+          )}
+          {!error.includes('⏳') && (
+            <button 
+              className="btn-retry"
+              onClick={fetchStatus}
+            >
+              <RefreshCw size={16} />
+              Tentar Novamente
+            </button>
+          )}
         </div>
       )}
 

@@ -20,6 +20,7 @@ export default function CardapioV2() {
   const [selectedType, setSelectedType] = useState("moda-casa")
   const [selectedSize, setSelectedSize] = useState("550ml")
   const [selectedToppings, setSelectedToppings] = useState([])
+  const [selectedToppingsQty, setSelectedToppingsQty] = useState({}) // NOVO: quantidade de cada complemento
   const [selectedDefaultToppings, setSelectedDefaultToppings] = useState([])
   const [quantity, setQuantity] = useState(1)
   const [useFreeAcai, setUseFreeAcai] = useState(false)
@@ -222,6 +223,39 @@ export default function CardapioV2() {
     setSelectedToppings((prev) =>
       prev.includes(toppingId) ? prev.filter((id) => id !== toppingId) : [...prev, toppingId],
     )
+    // Se adicionou um novo complemento, inicia com quantidade 1
+    if (!selectedToppings.includes(toppingId)) {
+      setSelectedToppingsQty((prev) => ({
+        ...prev,
+        [toppingId]: 1,
+      }))
+    }
+  }
+
+  // NOVO: Aumentar quantidade de um complemento
+  const incrementToppingQty = (toppingId) => {
+    setSelectedToppingsQty((prev) => ({
+      ...prev,
+      [toppingId]: (prev[toppingId] || 1) + 1,
+    }))
+  }
+
+  // NOVO: Diminuir quantidade de um complemento
+  const decrementToppingQty = (toppingId) => {
+    setSelectedToppingsQty((prev) => {
+      const currentQty = prev[toppingId] || 1
+      if (currentQty <= 1) {
+        // Se vai ficar 0 ou negativo, remove o complemento
+        setSelectedToppings((toppings) => toppings.filter((id) => id !== toppingId))
+        const newQty = { ...prev }
+        delete newQty[toppingId]
+        return newQty
+      }
+      return {
+        ...prev,
+        [toppingId]: currentQty - 1,
+      }
+    })
   }
 
   const toggleDefaultTopping = (toppingId) => {
@@ -239,7 +273,8 @@ export default function CardapioV2() {
     const basePrice = typeData?.prices[selectedSize] || 0
     const toppingsPrice = selectedToppings.reduce((sum, id) => {
       const topping = toppings.find((t) => t.id === id)
-      return sum + (topping?.price || 0)
+      const qty = selectedToppingsQty[id] || 1
+      return sum + ((topping?.price || 0) * qty)
     }, 0)
 
     const effectiveQuantity = useFreeAcai ? quantity - 1 : quantity
@@ -665,21 +700,52 @@ export default function CardapioV2() {
 
           {/* Additional Toppings */}
           <div className="cardapio-v2-section">
-            <label className="cardapio-v2-section-label">Complementos Adicionais</label>
+            <div className="cardapio-v2-section-header">
+              <label className="cardapio-v2-section-label">Complementos Adicionais</label>
+              {selectedToppings.length > 0 && (
+                <span className="cardapio-v2-badge">{selectedToppings.length} Selecionado(s)</span>
+              )}
+            </div>
 
             {/* Cremes */}
             <div className="cardapio-v2-toppings-category">
               <h3 className="cardapio-v2-category-title">Cremes</h3>
               <div className="cardapio-v2-toppings-grid">
                 {cremes.map((topping) => (
-                  <button
+                  <div
                     key={topping.id}
-                    onClick={() => toggleTopping(topping.id)}
-                    className={`cardapio-v2-topping-button ${selectedToppings.includes(topping.id) ? "selected" : ""}`}
+                    className={`cardapio-v2-topping-card ${selectedToppings.includes(topping.id) ? "selected" : ""}`}
                   >
-                    <div className="cardapio-v2-topping-name">{topping.name}</div>
-                    <div className="cardapio-v2-topping-price">+R$ {topping.price.toFixed(2)}</div>
-                  </button>
+                    <button
+                      onClick={() => toggleTopping(topping.id)}
+                      className={`cardapio-v2-topping-button`}
+                    >
+                      <div className="cardapio-v2-topping-name">{topping.name}</div>
+                      <div className="cardapio-v2-topping-price">+R$ {topping.price.toFixed(2)}</div>
+                    </button>
+                    
+                    {selectedToppings.includes(topping.id) && (
+                      <div className="cardapio-v2-topping-quantity-control">
+                        <button
+                          className="topping-qty-btn minus"
+                          onClick={() => decrementToppingQty(topping.id)}
+                          title="Diminuir quantidade"
+                        >
+                          −
+                        </button>
+                        <span className="topping-qty-display">
+                          {selectedToppingsQty[topping.id] || 1}x
+                        </span>
+                        <button
+                          className="topping-qty-btn plus"
+                          onClick={() => incrementToppingQty(topping.id)}
+                          title="Aumentar quantidade"
+                        >
+                          +
+                        </button>
+                      </div>
+                    )}
+                  </div>
                 ))}
               </div>
             </div>
@@ -689,14 +755,40 @@ export default function CardapioV2() {
               <h3 className="cardapio-v2-category-title">Diversos</h3>
               <div className="cardapio-v2-toppings-grid">
                 {diversos.map((topping) => (
-                  <button
+                  <div
                     key={topping.id}
-                    onClick={() => toggleTopping(topping.id)}
-                    className={`cardapio-v2-topping-button ${selectedToppings.includes(topping.id) ? "selected" : ""}`}
+                    className={`cardapio-v2-topping-card ${selectedToppings.includes(topping.id) ? "selected" : ""}`}
                   >
-                    <div className="cardapio-v2-topping-name">{topping.name}</div>
-                    <div className="cardapio-v2-topping-price">+R$ {topping.price.toFixed(2)}</div>
-                  </button>
+                    <button
+                      onClick={() => toggleTopping(topping.id)}
+                      className={`cardapio-v2-topping-button`}
+                    >
+                      <div className="cardapio-v2-topping-name">{topping.name}</div>
+                      <div className="cardapio-v2-topping-price">+R$ {topping.price.toFixed(2)}</div>
+                    </button>
+                    
+                    {selectedToppings.includes(topping.id) && (
+                      <div className="cardapio-v2-topping-quantity-control">
+                        <button
+                          className="topping-qty-btn minus"
+                          onClick={() => decrementToppingQty(topping.id)}
+                          title="Diminuir quantidade"
+                        >
+                          −
+                        </button>
+                        <span className="topping-qty-display">
+                          {selectedToppingsQty[topping.id] || 1}x
+                        </span>
+                        <button
+                          className="topping-qty-btn plus"
+                          onClick={() => incrementToppingQty(topping.id)}
+                          title="Aumentar quantidade"
+                        >
+                          +
+                        </button>
+                      </div>
+                    )}
+                  </div>
                 ))}
               </div>
             </div>
@@ -706,17 +798,78 @@ export default function CardapioV2() {
               <h3 className="cardapio-v2-category-title">Frutas</h3>
               <div className="cardapio-v2-toppings-grid">
                 {frutas.map((topping) => (
-                  <button
+                  <div
                     key={topping.id}
-                    onClick={() => toggleTopping(topping.id)}
-                    className={`cardapio-v2-topping-button ${selectedToppings.includes(topping.id) ? "selected" : ""}`}
+                    className={`cardapio-v2-topping-card ${selectedToppings.includes(topping.id) ? "selected" : ""}`}
                   >
-                    <div className="cardapio-v2-topping-name">{topping.name}</div>
-                    <div className="cardapio-v2-topping-price">+R$ {topping.price.toFixed(2)}</div>
-                  </button>
+                    <button
+                      onClick={() => toggleTopping(topping.id)}
+                      className={`cardapio-v2-topping-button`}
+                    >
+                      <div className="cardapio-v2-topping-name">{topping.name}</div>
+                      <div className="cardapio-v2-topping-price">+R$ {topping.price.toFixed(2)}</div>
+                    </button>
+                    
+                    {selectedToppings.includes(topping.id) && (
+                      <div className="cardapio-v2-topping-quantity-control">
+                        <button
+                          className="topping-qty-btn minus"
+                          onClick={() => decrementToppingQty(topping.id)}
+                          title="Diminuir quantidade"
+                        >
+                          −
+                        </button>
+                        <span className="topping-qty-display">
+                          {selectedToppingsQty[topping.id] || 1}x
+                        </span>
+                        <button
+                          className="topping-qty-btn plus"
+                          onClick={() => incrementToppingQty(topping.id)}
+                          title="Aumentar quantidade"
+                        >
+                          +
+                        </button>
+                      </div>
+                    )}
+                  </div>
                 ))}
               </div>
             </div>
+
+            {/* Shopping Cart Summary - DENTRO dos Complementos */}
+            {selectedToppings.length > 0 && (
+              <div className="cardapio-v2-shopping-cart">
+                <h3 className="cardapio-v2-cart-title">🛒 Seu Carrinho</h3>
+                <div className="cardapio-v2-cart-items">
+                  {selectedToppings.map((toppingId) => {
+                    const topping = toppings.find((t) => t.id === toppingId)
+                    const qty = selectedToppingsQty[toppingId] || 1
+                    const itemTotal = (topping?.price || 0) * qty
+                    return (
+                      <div key={toppingId} className="cardapio-v2-cart-item">
+                        <div className="cart-item-name">
+                          <span>{topping?.name}</span>
+                          <span className="cart-item-qty">({qty}x)</span>
+                        </div>
+                        <div className="cart-item-price">
+                          R$ {itemTotal.toFixed(2)}
+                        </div>
+                      </div>
+                    )
+                  })}
+                </div>
+                <div className="cardapio-v2-cart-subtotal">
+                  <span>💰 Subtotal Complementos:</span>
+                  <span className="cart-subtotal-value">
+                    R$ {selectedToppings.reduce((sum, id) => {
+                      const topping = toppings.find((t) => t.id === id)
+                      const qty = selectedToppingsQty[id] || 1
+                      return sum + ((topping?.price || 0) * qty)
+                    }, 0).toFixed(2)}
+                  </span>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Quantity */}
@@ -767,25 +920,32 @@ export default function CardapioV2() {
 
           {/* Delivery Type */}
           <div className="cardapio-v2-section">
-            <label className="cardapio-v2-section-label">Tipo de Entrega *</label>
+            <label className="cardapio-v2-section-label">
+              📦 Como Deseja Receber Seu Pedido? *
+              <span className="cardapio-v2-section-label-hint">(escolha uma opção)</span>
+            </label>
             <div className="cardapio-v2-delivery-grid">
               <button
                 type="button"
                 onClick={() => setDeliveryType("retirada")}
                 className={`cardapio-v2-delivery-button ${deliveryType === "retirada" ? "selected" : ""}`}
+                title="Retirar no local"
               >
                 <div className="delivery-icon">🏪</div>
-                <div className="delivery-title">Retirada</div>
-                <div className="delivery-price">Grátis</div>
+                <div className="delivery-title">Retirada no Local</div>
+                <div className="delivery-subtitle">Você vem buscar</div>
+                <div className="delivery-price">💰 Grátis</div>
               </button>
               <button
                 type="button"
                 onClick={() => setDeliveryType("entrega")}
                 className={`cardapio-v2-delivery-button ${deliveryType === "entrega" ? "selected" : ""}`}
+                title="Entregar em seu endereço"
               >
-                <div className="delivery-icon">🛵</div>
-                <div className="delivery-title">Entrega</div>
-                <div className="delivery-price">+ R$ 2,00</div>
+                <div className="delivery-icon">🚚</div>
+                <div className="delivery-title">Entrega em Casa</div>
+                <div className="delivery-subtitle">Nós levamos até você</div>
+                <div className="delivery-price">💵 +R$ 2,00</div>
               </button>
             </div>
           </div>

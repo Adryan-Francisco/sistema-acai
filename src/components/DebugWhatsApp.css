@@ -1,0 +1,279 @@
+/* src/components/DebugWhatsApp.css */
+
+.debug-container {
+  background: white;
+  border-radius: 1rem;
+  padding: 2rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  margin-bottom: 2rem;
+}
+
+.debug-header {
+  border-bottom: 2px solid #f3f4f6;
+  padding-bottom: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.debug-header h2 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.5rem;
+  color: #1f2937;
+}
+
+.debug-header p {
+  margin: 0;
+  color: #6b7280;
+}
+
+.debug-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 2rem;
+  text-align: center;
+  color: #6b7280;
+}
+
+.debug-loading .spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.debug-checks {
+  display: grid;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.debug-check {
+  display: flex;
+  gap: 1rem;
+  padding: 1rem;
+  border-radius: 0.75rem;
+  border-left: 4px solid;
+}
+
+.debug-check.success {
+  background: #d1fae5;
+  border-left-color: #10b981;
+}
+
+.debug-check.error {
+  background: #fee2e2;
+  border-left-color: #ef4444;
+}
+
+.check-icon {
+  display: flex;
+  align-items: flex-start;
+  padding-top: 0.25rem;
+  flex-shrink: 0;
+}
+
+.check-info h4 {
+  margin: 0 0 0.25rem 0;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.debug-check.success h4 {
+  color: #065f46;
+}
+
+.debug-check.error h4 {
+  color: #991b1b;
+}
+
+.check-info p {
+  margin: 0;
+  font-size: 0.875rem;
+}
+
+.debug-check.success p {
+  color: #047857;
+}
+
+.debug-check.error p {
+  color: #dc2626;
+}
+
+.error-text,
+.info-text {
+  display: block;
+  margin-top: 0.5rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+}
+
+.error-text {
+  color: #991b1b;
+}
+
+.info-text {
+  color: #4b5563;
+}
+
+.debug-response {
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  margin-top: 0.75rem;
+  font-size: 0.8125rem;
+  overflow-x: auto;
+  position: relative;
+}
+
+.copy-btn {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  background: #9333ea;
+  color: white;
+  border: none;
+  border-radius: 0.375rem;
+  padding: 0.375rem 0.75rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  font-size: 0.75rem;
+  transition: all 0.2s ease;
+}
+
+.copy-btn:hover {
+  background: #7c3aed;
+}
+
+.debug-solutions {
+  background: #fef3c7;
+  border: 1px solid #fcd34d;
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.debug-solutions h3 {
+  margin: 0 0 1rem 0;
+  color: #92400e;
+  font-size: 1.125rem;
+}
+
+.debug-solutions ol {
+  margin: 0;
+  padding-left: 1.5rem;
+  color: #92400e;
+  line-height: 1.8;
+}
+
+.debug-solutions li {
+  margin-bottom: 0.75rem;
+}
+
+.debug-solutions strong {
+  color: #78350f;
+}
+
+.copy-text {
+  display: block;
+  background: white;
+  border: 1px solid #fcd34d;
+  border-radius: 0.375rem;
+  padding: 0.75rem 1rem;
+  margin-top: 0.5rem;
+  font-family: 'Courier New', monospace;
+  font-size: 0.85rem;
+  cursor: pointer;
+  word-break: break-all;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  justify-content: space-between;
+}
+
+.copy-text:hover {
+  background: #fffbeb;
+  border-color: #fbbf24;
+}
+
+.debug-tips {
+  background: #dbeafe;
+  border: 1px solid #bfdbfe;
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+}
+
+.debug-tips h3 {
+  margin: 0 0 1rem 0;
+  color: #1e40af;
+  font-size: 1.125rem;
+}
+
+.debug-tips ul {
+  margin: 0;
+  padding-left: 1.5rem;
+  color: #1e40af;
+  line-height: 1.8;
+}
+
+.debug-tips li {
+  margin-bottom: 0.5rem;
+}
+
+.debug-tips code {
+  background: rgba(30, 64, 175, 0.1);
+  padding: 0.2rem 0.4rem;
+  border-radius: 0.25rem;
+  font-family: 'Courier New', monospace;
+  font-size: 0.875rem;
+}
+
+/* Dark mode */
+[data-theme="dark"] .debug-container {
+  background: #1f2937;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="dark"] .debug-header {
+  border-bottom-color: #374151;
+}
+
+[data-theme="dark"] .debug-header h2 {
+  color: #f9fafb;
+}
+
+[data-theme="dark"] .debug-header p {
+  color: #d1d5db;
+}
+
+[data-theme="dark"] .debug-response {
+  background: #111827;
+  border-color: #374151;
+  color: #e5e7eb;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .debug-container {
+    padding: 1.5rem;
+  }
+
+  .debug-checks {
+    gap: 0.75rem;
+  }
+
+  .debug-check {
+    flex-direction: column;
+    padding: 1rem;
+  }
+
+  .copy-text {
+    font-size: 0.8rem;
+  }
+}

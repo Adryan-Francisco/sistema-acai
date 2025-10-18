@@ -12,9 +12,19 @@ import pino from 'pino';
 const app = express();
 const PORT = process.env.PORT || 3001;
 
+// Configuração melhorada de CORS
+const corsOptions = {
+  origin: ['http://localhost:5173', 'http://localhost:3000', 'http://localhost:8080', 'http://127.0.0.1:5173'],
+  credentials: true,
+  methods: ['GET', 'POST', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  optionsSuccessStatus: 200
+};
+
 // Middlewares
-app.use(cors());
-app.use(express.json());
+app.use(cors(corsOptions));
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
 // Logger
 const logger = pino({ level: 'silent' });
@@ -68,10 +78,10 @@ async function connectToWhatsApp() {
         isConnected = false;
         const shouldReconnect = lastDisconnect?.error?.output?.statusCode !== DisconnectReason.loggedOut;
         
-        console.log('❌ Conexão fechada. Motivo:', lastDisconnect?.error);
+        console.log('❌ Conexão fechada. Motivo:', lastDisconnect?.error?.message || lastDisconnect?.error);
         
         if (shouldReconnect) {
-          console.log('🔄 Reconectando...');
+          console.log('🔄 Reconectando em 3 segundos...');
           connectionStatus = 'reconnecting';
           setTimeout(connectToWhatsApp, 3000);
         } else {
@@ -97,8 +107,11 @@ async function connectToWhatsApp() {
     });
 
   } catch (error) {
-    console.error('❌ Erro ao conectar:', error);
+    console.error('❌ Erro ao conectar:', error.message || error);
     connectionStatus = 'error';
+    // Não lance o erro, apenas registre e tente novamente após 5 segundos
+    console.log('🔄 Tentando reconectar em 5 segundos...');
+    setTimeout(connectToWhatsApp, 5000);
   }
 }
 
@@ -138,6 +151,20 @@ async function sendTextMessage(to, message) {
 // ========================================
 // ROTAS DA API
 // ========================================
+
+// Preflight handler para OPTIONS requests
+app.options('*', cors(corsOptions));
+
+/**
+ * Health check
+ */
+app.get('/health', (req, res) => {
+  res.json({
+    status: 'ok',
+    message: 'Servidor WhatsApp rodando',
+    timestamp: new Date().toISOString()
+  });
+});
 
 /**
  * Status da conexão
@@ -365,6 +392,35 @@ app.post('/disconnect', async (req, res) => {
       message: error.message
     });
   }
+});
+
+// Middleware de tratamento de erro 404
+app.use((req, res) => {
+  res.status(404).json({
+    error: 'Rota não encontrada',
+    path: req.path,
+    method: req.method,
+    availableRoutes: [
+      'GET /health',
+      'GET /status',
+      'GET /qr',
+      'POST /send-message',
+      'POST /send-order-confirmation',
+      'POST /send-status-update',
+      'POST /send-review-reminder',
+      'POST /disconnect'
+    ]
+  });
+});
+
+// Middleware de tratamento de erro global
+app.use((err, req, res, next) => {
+  console.error('❌ Erro não tratado:', err);
+  res.status(500).json({
+    error: 'Erro interno do servidor',
+    message: err.message,
+    timestamp: new Date().toISOString()
+  });
 });
 
 // Iniciar servidor
