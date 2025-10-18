@@ -14,7 +14,22 @@ const PORT = process.env.PORT || 3001;
 
 // Configuração melhorada de CORS
 const corsOptions = {
-  origin: ['http://localhost:5173', 'http://localhost:3000', 'http://localhost:8080', 'http://127.0.0.1:5173'],
+  origin: (origin, callback) => {
+    const whitelist = [
+      'http://localhost:5173',
+      'http://localhost:3000',
+      'http://localhost:8080',
+      'http://127.0.0.1:5173',
+      'https://adryan-francisco.github.io',
+      'https://adryan-francisco.github.io/sistema-acai'
+    ];
+    
+    if (!origin || whitelist.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(null, true); // Permitir para desenvolvimento
+    }
+  },
   credentials: true,
   methods: ['GET', 'POST', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
