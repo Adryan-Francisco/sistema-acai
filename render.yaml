@@ -2,8 +2,10 @@ services:
   - type: web
     name: sistema-acai-server
     runtime: node
-    buildCommand: npm --prefix ./server install
-    startCommand: npm --prefix ./server start
+    buildCommand: cd server && npm install
+    startCommand: bash start.sh
     envVars:
       - key: NODE_ENV
         value: production
+      - key: PORT
+        value: 3001
