@@ -150,6 +150,8 @@ export function generateStatusUpdateMessage(order, newStatus) {
  */
 export function generateReviewReminderMessage(order) {
   const { nome_cliente, id } = order
+  const siteUrl = 'https://adryan-francisco.github.io/sistema-acai'
+  const avaliacaoLink = `${siteUrl}?avaliar=${id}`
   
   let message = `⭐ *Deixe sua Avaliação!*\n`
   message += `━━━━━━━━━━━━━━━━━━━━━\n\n`
@@ -157,7 +159,8 @@ export function generateReviewReminderMessage(order) {
   message += `Esperamos que tenha gostado do seu açaí! 😊\n`
   message += `Sua opinião é *muito importante* para nós.\n\n`
   message += `Que tal avaliar seu pedido #${id}?\n\n`
-  message += `⭐⭐⭐⭐⭐ Acesse nosso sistema e deixe sua avaliação!\n\n`
+  message += `⭐⭐⭐⭐⭐ Clique aqui para avaliar:\n`
+  message += `${avaliacaoLink}\n\n`
   message += `━━━━━━━━━━━━━━━━━━━━━\n`
   message += `Queremos sempre melhorar para você! ❤️\n\n`
   message += `_${WHATSAPP_CONFIG.lojaNome}_`

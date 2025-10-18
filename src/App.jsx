@@ -23,6 +23,7 @@ import MeusPedidos from './components/MeusPedidos';
 import ResgatarAcai from './components/ResgatarAcai';
 import ProgramaFidelidade from './components/ProgramaFidelidade';
 import DebugEnv from './components/DebugEnv';
+import PaginaAvaliacao from './components/PaginaAvaliacao';
 
 // Importação dos componentes de proteção de rota
 import ProtectedRoute from './components/ProtectedRoute'; // Para Admins
@@ -283,6 +284,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/email-confirmado" element={<EmailConfirmado />} />
+          <Route path="/avaliar" element={<PaginaAvaliacao />} />
           <Route path="/_debug" element={<DebugEnv />} />
 
           {/* Rota Protegida para Administradores */}
