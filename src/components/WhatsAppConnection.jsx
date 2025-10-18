@@ -1,9 +1,11 @@
 // src/components/WhatsAppConnection.jsx
 import React, { useState, useEffect } from 'react';
 import { QRCodeSVG } from 'qrcode.react';
-import { Smartphone, CheckCircle, XCircle, RefreshCw, Loader } from 'lucide-react';
+import { Smartphone, CheckCircle, XCircle, RefreshCw, Loader, AlertCircle, Info } from 'lucide-react';
 import { checkWhatsAppStatus, getWhatsAppQRCode } from '../utils/whatsappService';
 import './WhatsAppConnection.css';
+
+const BAILEYS_URL = import.meta.env.VITE_BAILEYS_API_URL || 'http://localhost:3001';
 
 export default function WhatsAppConnection() {
   const [status, setStatus] = useState({
@@ -237,6 +239,25 @@ export default function WhatsAppConnection() {
             As notificações automáticas de pedidos estão ativas.
             Os clientes receberão atualizações via WhatsApp.
           </p>
+        </div>
+      )}
+
+      {/* Informação sobre servidor */}
+      {BAILEYS_URL.includes('localhost') ? (
+        <div className="whatsapp-server-info info">
+          <Info size={16} />
+          <div>
+            <strong>Servidor Local Detectado</strong>
+            <p>Você está em desenvolvimento. Para GitHub Pages, configure VITE_BAILEYS_API_URL no .env</p>
+          </div>
+        </div>
+      ) : (
+        <div className="whatsapp-server-info success">
+          <CheckCircle size={16} />
+          <div>
+            <strong>Servidor Configurado</strong>
+            <p>URL: {BAILEYS_URL}</p>
+          </div>
         </div>
       )}
 

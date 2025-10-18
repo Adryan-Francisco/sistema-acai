@@ -279,6 +279,46 @@
   color: #6b7280;
 }
 
+/* Server Info */
+.whatsapp-server-info {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+  padding: 1rem;
+  margin-top: 1rem;
+  border-radius: 0.5rem;
+  font-size: 0.9375rem;
+}
+
+.whatsapp-server-info.info {
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  color: #1e40af;
+}
+
+.whatsapp-server-info.success {
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  color: #166534;
+}
+
+.whatsapp-server-info strong {
+  display: block;
+  margin-bottom: 0.25rem;
+  font-weight: 600;
+}
+
+.whatsapp-server-info p {
+  margin: 0;
+  font-size: 0.8125rem;
+  opacity: 0.9;
+}
+
+.whatsapp-server-info svg {
+  flex-shrink: 0;
+  margin-top: 0.125rem;
+}
+
 /* Actions */
 .whatsapp-actions {
   display: flex;
@@ -342,6 +382,18 @@
 
 [data-theme="dark"] .success-message {
   color: #10b981;
+}
+
+[data-theme="dark"] .whatsapp-server-info.info {
+  background: rgba(30, 64, 175, 0.1);
+  border-color: rgba(59, 130, 246, 0.3);
+  color: #93c5fd;
+}
+
+[data-theme="dark"] .whatsapp-server-info.success {
+  background: rgba(22, 101, 52, 0.1);
+  border-color: rgba(34, 197, 94, 0.3);
+  color: #86efac;
 }
 
 [data-theme="dark"] .info-text {
